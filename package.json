@@ -8,7 +8,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "npm run predeploy && gh-pages -d dist"
   },
   "dependencies": {
     "@date-io/date-fns": "^3.2.1",
