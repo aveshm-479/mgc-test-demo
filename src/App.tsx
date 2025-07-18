@@ -44,14 +44,14 @@ const AppRoutes: React.FC = () => {
         }
       >
         <Route index element={<DashboardPage />} />
-        <Route path="megical-community/dashboard" element={<DashboardPage />} />
-        <Route path="megical-community/visitors" element={<VisitorsPage />} />
-        <Route path="megical-community/clubs" element={<ClubsPage />} />
-        <Route path="megical-community/inventory" element={<InventoryPage />} />
-        <Route path="megical-community/attendance" element={<AttendancePage />} />
-        <Route path="megical-community/expenses" element={<ExpensesPage />} />
+        <Route path="mgc-test-demo/dashboard" element={<DashboardPage />} />
+        <Route path="mgc-test-demo/visitors" element={<VisitorsPage />} />
+        <Route path="mgc-test-demo/clubs" element={<ClubsPage />} />
+        <Route path="mgc-test-demo/inventory" element={<InventoryPage />} />
+        <Route path="mgc-test-demo/attendance" element={<AttendancePage />} />
+        <Route path="mgc-test-demo/expenses" element={<ExpensesPage />} />
         {user?.role === 'super_admin' && (
-          <Route path="megical-community/admin-management" element={<AdminManagementPage />} />
+          <Route path="mgc-test-demo/admin-management" element={<AdminManagementPage />} />
         )}
       </Route>
     </Routes>
@@ -63,7 +63,7 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <AppProvider>
-          <Router basename="/megical-community">
+          <Router basename="/mgc-test-demo">
             <AppRoutes />
           </Router>
         </AppProvider>
