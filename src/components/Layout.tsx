@@ -70,13 +70,13 @@ export const Layout: React.FC = () => {
   };
 
   const navigation = [
-    { name: 'Dashboard', href: '/megical-community/dashboard', icon: <DashboardIcon />, color: '#FFD700' },
-    { name: 'Visitors', href: '/megical-community/visitors', icon: <PeopleIcon />, color: '#FFEB3B' },
-    { name: 'Clubs', href: '/megical-community/clubs', icon: <BusinessIcon />, color: '#FFF176' },
-    { name: 'Inventory', href: '/megical-community/inventory', icon: <InventoryIcon />, color: '#FFCA28' },
-    { name: 'Attendance', href: '/megical-community/attendance', icon: <CalendarIcon />, color: '#FFC107' },
-    { name: 'Expenses', href: '/megical-community/expenses', icon: <MoneyIcon />, color: '#FFD700' },
-    ...(user?.role === 'super_admin' ? [{ name: 'Admin Management', href: '/megical-community/admin-management', icon: <AdminIcon />, color: '#FFEB3B' }] : []),
+    { name: 'Dashboard', href: '/mgc-test-demo/dashboard', icon: <DashboardIcon />, color: '#FFD700' },
+    { name: 'Visitors', href: '/mgc-test-demo/visitors', icon: <PeopleIcon />, color: '#FFEB3B' },
+    { name: 'Clubs', href: '/mgc-test-demo/clubs', icon: <BusinessIcon />, color: '#FFF176' },
+    { name: 'Inventory', href: '/mgc-test-demo/inventory', icon: <InventoryIcon />, color: '#FFCA28' },
+    { name: 'Attendance', href: '/mgc-test-demo/attendance', icon: <CalendarIcon />, color: '#FFC107' },
+    { name: 'Expenses', href: '/mgc-test-demo/expenses', icon: <MoneyIcon />, color: '#FFD700' },
+    ...(user?.role === 'super_admin' ? [{ name: 'Admin Management', href: '/mgc-test-demo/admin-management', icon: <AdminIcon />, color: '#FFEB3B' }] : []),
   ];
 
   const drawerWidth = 280;
