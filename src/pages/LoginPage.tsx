@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Box,
@@ -76,6 +77,7 @@ export const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const navigate = useNavigate();
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -85,7 +87,9 @@ export const LoginPage: React.FC = () => {
 
     try {
       const success = await login(email, password);
-      if (!success) {
+      if (success) {
+        navigate('/mgc-test-demo/dashboard');
+      } else {
         setError('Invalid email or password');
       }
     } catch {
@@ -101,9 +105,9 @@ export const LoginPage: React.FC = () => {
   };
 
   const demoCredentials = [
-    { role: 'Super Admin', email: 'super@magicalcommunity.com', password: 'password123', color: '#FFD700' },
-    { role: 'Admin', email: 'admin1@magicalcommunity.com', password: 'password123', color: '#4CAF50' },
-    { role: 'Manager', email: 'manager@magicalcommunity.com', password: 'password123', color: '#2196F3' },
+    { role: 'Super Admin', email: 'super@magicalcommunity.com', password: 'admin123', color: '#FFD700' },
+    { role: 'Admin', email: 'admin1@magicalcommunity.com', password: 'admin123', color: '#4CAF50' },
+    { role: 'Admin', email: 'admin2@magicalcommunity.com', password: 'admin123', color: '#2196F3' },
   ];
 
   return (

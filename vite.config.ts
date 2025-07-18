@@ -5,4 +5,10 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: '/mgc-test-demo/',
   plugins: [react()],
+   server: {
+    host: true,
+    strictPort: false,
+    // Optionally, you can also set allowedHosts to 'all' to allow all hosts
+    allowedHosts: true
+  }
 })
