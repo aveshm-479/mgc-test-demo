@@ -1,0 +1,245 @@
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Remove conflicting styles for login page */
+.login-page #root {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+/* Fix white line issue and ensure proper styling */
+* {
+  border: 0;
+  outline: none;
+  box-sizing: border-box;
+}
+
+html, body {
+  min-height: 100vh;
+  height: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  background: #000000;
+  border: none;
+  outline: none;
+}
+
+/* Ensure full viewport coverage */
+html {
+  width: 100vw;
+  max-width: 100vw;
+}
+
+body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Custom animations for login page */
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+@keyframes glitch {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+}
+
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+  50% { box-shadow: 0 0 20px 10px rgba(255, 215, 0, 0); }
+}
+
+@keyframes slide-in {
+  0% { transform: translateX(-100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-glitch {
+  animation: glitch 0.3s infinite;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 3s ease infinite;
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+.animate-slide-in {
+  animation: slide-in 0.5s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out;
+}
+
+/* Black and Yellow Theme Variables */
+:root {
+  --black-primary: #000000;
+  --black-secondary: #1a1a1a;
+  --black-tertiary: #2d2d2d;
+  --yellow-primary: #FFD700;
+  --yellow-secondary: #FFEB3B;
+  --yellow-accent: #FFCA28;
+  --gray-dark: #333333;
+  --gray-medium: #555555;
+  --gray-light: #f5f5f5;
+}
+
+/* Dashboard Background */
+.dashboard-bg {
+  background: linear-gradient(135deg, var(--black-primary) 0%, var(--black-secondary) 50%, var(--black-tertiary) 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Yellow Accent Background */
+.yellow-accent-bg {
+  background: linear-gradient(135deg, var(--yellow-primary), var(--yellow-secondary));
+}
+
+/* Glassmorphism Effects */
+.glassmorphism {
+  background: rgba(26, 26, 26, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.glassmorphism-light {
+  background: rgba(255, 215, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+/* Yellow Glow Effects */
+.yellow-glow {
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.yellow-glow-hover:hover {
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+}
+
+/* Geometric Background Pattern */
+.geometric-pattern {
+  background-image: 
+    linear-gradient(45deg, rgba(255, 215, 0, 0.1) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 215, 0, 0.1) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255, 215, 0, 0.1) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255, 215, 0, 0.1) 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
+/* Floating Yellow Particles */
+.floating-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.floating-particles::before,
+.floating-particles::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--yellow-primary);
+  border-radius: 50%;
+  animation: float 8s infinite linear;
+}
+
+.floating-particles::before {
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.floating-particles::after {
+  left: 90%;
+  animation-delay: 4s;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}

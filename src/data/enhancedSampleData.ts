@@ -1,0 +1,460 @@
+// NEW: Enhanced sample data for complete CMS testing
+import type { User, Club, Visitor, Product, Expense, Attendance } from '../types';
+
+// Enhanced Users
+export const enhancedUsers: User[] = [
+  {
+    id: 'super-admin-1',
+    email: 'super@magicalcommunity.com',
+    name: 'Super Admin',
+    role: 'super_admin',
+    createdAt: new Date('2024-01-01'),
+  },
+  {
+    id: 'admin-1',
+    email: 'admin1@magicalcommunity.com',
+    name: 'Admin A',
+    role: 'admin',
+    createdAt: new Date('2024-01-15'),
+    createdBy: 'super-admin-1',
+  },
+  {
+    id: 'admin-2',
+    email: 'admin2@magicalcommunity.com',
+    name: 'Admin B',
+    role: 'admin',
+    createdAt: new Date('2024-02-01'),
+    createdBy: 'super-admin-1',
+  },
+  {
+    id: 'admin-3',
+    email: 'admin3@magicalcommunity.com',
+    name: 'Admin C',
+    role: 'admin',
+    createdAt: new Date('2024-02-15'),
+    createdBy: 'admin-1',
+  },
+];
+
+// Enhanced Clubs
+export const enhancedClubs: Club[] = [
+  {
+    id: 'club-1',
+    name: 'Magical Wellness Downtown',
+    location: '123 Main St, Downtown',
+    contact: '+91 98765 43210',
+    email: 'downtown@magicalcommunity.com',
+    assignedAdminId: 'admin-1',
+    createdAt: new Date('2024-01-20'),
+    settings: {
+      trialFee: 700,
+      membershipPlans: [
+        {
+          id: 'plan-1',
+          name: 'Monthly Membership',
+          price: 7500,
+          duration: 30,
+          description: 'Full access to all facilities for 30 days',
+        },
+        {
+          id: 'plan-2',
+          name: 'Quarterly Membership',
+          price: 20000,
+          duration: 90,
+          description: 'Save 11% with quarterly membership',
+        },
+      ],
+    },
+  },
+  {
+    id: 'club-2',
+    name: 'Magical Wellness Uptown',
+    location: '456 Park Ave, Uptown',
+    contact: '+91 98765 43211',
+    email: 'uptown@magicalcommunity.com',
+    assignedAdminId: 'admin-2',
+    createdAt: new Date('2024-02-05'),
+    settings: {
+      trialFee: 700,
+      membershipPlans: [
+        {
+          id: 'plan-3',
+          name: 'Monthly Membership',
+          price: 7500,
+          duration: 30,
+          description: 'Full access to all facilities for 30 days',
+        },
+      ],
+    },
+  },
+  {
+    id: 'club-3',
+    name: 'Magical Wellness Westside',
+    location: '789 West Blvd, Westside',
+    contact: '+91 98765 43212',
+    email: 'westside@magicalcommunity.com',
+    assignedAdminId: 'admin-3',
+    createdAt: new Date('2024-02-20'),
+    settings: {
+      trialFee: 700,
+      membershipPlans: [
+        {
+          id: 'plan-4',
+          name: 'Monthly Membership',
+          price: 7500,
+          duration: 30,
+          description: 'Full access to all facilities for 30 days',
+        },
+      ],
+    },
+  },
+];
+
+// Enhanced Visitors with more variety
+export const enhancedVisitors: Visitor[] = [
+  {
+    id: 'visitor-1',
+    email:'',
+    name: 'John Doe',
+    mobile: '+91 98765 12345',
+    address: '123 Street, City',
+    referralSource: 'Google',
+    visitDate: new Date('2024-07-15'),
+    clubId: 'club-1',
+    type: 'visitor',
+    status: 'active',
+    payments: [],
+  },
+  {
+    id: 'visitor-2',
+    name: 'Jane Smith',
+    email:'',
+    mobile: '+91 98765 12346',
+    address: '456 Avenue, City',
+    referralSource: 'Friend',
+    visitDate: new Date('2024-07-14'),
+    clubId: 'club-1',
+    type: 'trial',
+    status: 'active',
+    trialEndDate: new Date('2024-07-17'),
+    payments: [
+      {
+        id: 'payment-1',
+        amount: 700,
+        type: 'trial',
+        status: 'completed',
+        date: new Date('2024-07-14'),
+        visitorId: 'visitor-2',
+        clubId: 'club-1',
+      },
+    ],
+  },
+  {
+    id: 'visitor-3',
+    name: 'Mike Johnson',
+    email:'',
+    mobile: '+91 98765 12347',
+    address: '789 Road, City',
+    referralSource: 'Instagram',
+    visitDate: new Date('2024-07-10'),
+    clubId: 'club-1',
+    type: 'member',
+    status: 'active',
+    membershipEndDate: new Date('2024-08-10'),
+    payments: [
+      {
+        id: 'payment-2',
+        amount: 7500,
+        type: 'membership',
+        status: 'completed',
+        date: new Date('2024-07-10'),
+        visitorId: 'visitor-3',
+        clubId: 'club-1',
+      },
+    ],
+  },
+  {
+    id: 'visitor-4',
+    name: 'Sarah Wilson',
+    email:'',
+    mobile: '+91 98765 12348',
+    address: '321 Lane, City',
+    referralSource: 'Facebook',
+    visitDate: new Date('2024-07-16'),
+    clubId: 'club-2',
+    type: 'trial',
+    status: 'active',
+    trialEndDate: new Date('2024-07-19'),
+    payments: [
+      {
+        id: 'payment-3',
+        amount: 700,
+        type: 'trial',
+        status: 'completed',
+        date: new Date('2024-07-16'),
+        visitorId: 'visitor-4',
+        clubId: 'club-2',
+      },
+    ],
+  },
+  {
+    id: 'visitor-5',
+    name: 'David Brown',
+    email:'',
+    mobile: '+91 98765 12349',
+    address: '654 Court, City',
+    referralSource: 'Walk-in',
+    visitDate: new Date('2024-07-12'),
+    clubId: 'club-1',
+    type: 'member',
+    status: 'active',
+    membershipEndDate: new Date('2024-08-12'),
+    payments: [
+      {
+        id: 'payment-4',
+        amount: 7500,
+        type: 'membership',
+        status: 'completed',
+        date: new Date('2024-07-12'),
+        visitorId: 'visitor-5',
+        clubId: 'club-1',
+      },
+    ],
+  },
+  {
+    id: 'visitor-6',
+    name: 'Emma Davis',
+    email:'',
+    mobile: '+91 98765 12350',
+    address: '987 Park, City',
+    referralSource: 'Google',
+    visitDate: new Date('2024-07-13'),
+    clubId: 'club-2',
+    type: 'member',
+    status: 'active',
+    membershipEndDate: new Date('2024-08-13'),
+    payments: [
+      {
+        id: 'payment-5',
+        amount: 7500,
+        type: 'membership',
+        status: 'completed',
+        date: new Date('2024-07-13'),
+        visitorId: 'visitor-6',
+        clubId: 'club-2',
+      },
+    ],
+  },
+];
+
+// Enhanced Products with more variety
+export const enhancedProducts: Product[] = [
+  {
+    id: 'product-1',
+    name: 'Protein Shake - Chocolate',
+    category: 'shake',
+    price: 150,
+    stock: 50,
+    minStock: 10,
+    clubId: 'club-1',
+  },
+  {
+    id: 'product-2',
+    name: 'Protein Shake - Vanilla',
+    category: 'shake',
+    price: 150,
+    stock: 45,
+    minStock: 10,
+    clubId: 'club-1',
+  },
+  {
+    id: 'product-3',
+    name: 'Multivitamin Complex',
+    category: 'vitamin',
+    price: 800,
+    stock: 25,
+    minStock: 5,
+    clubId: 'club-1',
+  },
+  {
+    id: 'product-4',
+    name: 'Whey Protein Powder',
+    category: 'supplement',
+    price: 2500,
+    stock: 15,
+    minStock: 5,
+    clubId: 'club-1',
+  },
+  {
+    id: 'product-5',
+    name: 'Protein Shake - Chocolate',
+    category: 'shake',
+    price: 150,
+    stock: 30,
+    minStock: 10,
+    clubId: 'club-2',
+  },
+  {
+    id: 'product-6',
+    name: 'BCAA Powder',
+    category: 'supplement',
+    price: 1800,
+    stock: 8,
+    minStock: 10,
+    clubId: 'club-1',
+  },
+  {
+    id: 'product-7',
+    name: 'Vitamin D3',
+    category: 'vitamin',
+    price: 450,
+    stock: 3,
+    minStock: 5,
+    clubId: 'club-2',
+  },
+  {
+    id: 'product-8',
+    name: 'Protein Shake - Strawberry',
+    category: 'shake',
+    price: 150,
+    stock: 20,
+    minStock: 10,
+    clubId: 'club-3',
+  },
+];
+
+// Enhanced Expenses with multiple categories
+export const enhancedExpenses: Expense[] = [
+  {
+    id: 'expense-1',
+    description: 'Electricity Bill - July',
+    amount: 5000,
+    date: new Date('2024-07-01'),
+    category: 'Utilities',
+    clubId: 'club-1',
+  },
+  {
+    id: 'expense-2',
+    description: 'Equipment Maintenance - Treadmills',
+    amount: 3000,
+    date: new Date('2024-07-05'),
+    category: 'Maintenance',
+    clubId: 'club-1',
+  },
+  {
+    id: 'expense-3',
+    description: 'Cleaning Supplies - Monthly',
+    amount: 1500,
+    date: new Date('2024-07-10'),
+    category: 'Supplies',
+    clubId: 'club-1',
+  },
+  {
+    id: 'expense-4',
+    description: 'Facebook Ads Campaign',
+    amount: 2500,
+    date: new Date('2024-07-08'),
+    category: 'Marketing',
+    clubId: 'club-1',
+  },
+  {
+    id: 'expense-5',
+    description: 'Staff Salary - July',
+    amount: 15000,
+    date: new Date('2024-07-25'),
+    category: 'Staff',
+    clubId: 'club-1',
+  },
+  {
+    id: 'expense-6',
+    description: 'New Dumbbells Set',
+    amount: 8000,
+    date: new Date('2024-07-12'),
+    category: 'Equipment',
+    clubId: 'club-2',
+  },
+  {
+    id: 'expense-7',
+    description: 'Water Bill - July',
+    amount: 1200,
+    date: new Date('2024-07-03'),
+    category: 'Utilities',
+    clubId: 'club-2',
+  },
+  {
+    id: 'expense-8',
+    description: 'Yoga Mats Replacement',
+    amount: 2200,
+    date: new Date('2024-07-15'),
+    category: 'Equipment',
+    clubId: 'club-3',
+  },
+];
+
+// Enhanced Attendance with daily records
+export const enhancedAttendance: Attendance[] = [
+  {
+    id: 'attendance-1',
+    visitorId: 'visitor-3',
+    clubId: 'club-1',
+    date: new Date('2024-07-15'),
+    status: 'present',
+  },
+  {
+    id: 'attendance-2',
+    visitorId: 'visitor-3',
+    clubId: 'club-1',
+    date: new Date('2024-07-14'),
+    status: 'present',
+  },
+  {
+    id: 'attendance-3',
+    visitorId: 'visitor-3',
+    clubId: 'club-1',
+    date: new Date('2024-07-13'),
+    status: 'absent',
+  },
+  {
+    id: 'attendance-4',
+    visitorId: 'visitor-5',
+    clubId: 'club-1',
+    date: new Date('2024-07-15'),
+    status: 'present',
+  },
+  {
+    id: 'attendance-5',
+    visitorId: 'visitor-5',
+    clubId: 'club-1',
+    date: new Date('2024-07-14'),
+    status: 'absent',
+  },
+  {
+    id: 'attendance-6',
+    visitorId: 'visitor-6',
+    clubId: 'club-2',
+    date: new Date('2024-07-15'),
+    status: 'present',
+  },
+  {
+    id: 'attendance-7',
+    visitorId: 'visitor-6',
+    clubId: 'club-2',
+    date: new Date('2024-07-14'),
+    status: 'present',
+  },
+  {
+    id: 'attendance-8',
+    visitorId: 'visitor-6',
+    clubId: 'club-2',
+    date: new Date('2024-07-13'),
+    status: 'present',
+  },
+];
+
+// Export all enhanced data
+export const sampleUsers = enhancedUsers;
+export const sampleClubs = enhancedClubs;
+export const sampleVisitors = enhancedVisitors;
+export const sampleProducts = enhancedProducts;
+export const sampleExpenses = enhancedExpenses;
+export const sampleAttendance = enhancedAttendance;

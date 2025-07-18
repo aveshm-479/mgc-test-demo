@@ -1,1 +1,1 @@
-# mgc-test-demo
+DEMO
