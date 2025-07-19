@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/megical-community/',
+  base: '/mgc-test-demo/',
   plugins: [react()],
   build: {
     rollupOptions: {

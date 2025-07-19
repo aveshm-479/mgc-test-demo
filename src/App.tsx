@@ -76,7 +76,7 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <AppProvider>
-          <Router basename="/megical-community">
+          <Router basename="/mgc-test-demo">
             <AppRoutes />
           </Router>
         </AppProvider>
