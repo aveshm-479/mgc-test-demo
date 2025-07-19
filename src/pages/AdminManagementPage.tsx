@@ -19,7 +19,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Fab
+  Fab,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -35,6 +35,7 @@ import { useAuth } from '../hooks/useAuth';
 import { ModernCard, StatCard } from '../components/ui/ModernCard';
 import type { User, Club } from '../types';
 import { sampleUsers, sampleClubs } from '../data/sampleData';
+import { useTheme } from '../hooks/useTheme';
 
 interface AdminFormData {
   name: string;
@@ -125,6 +126,8 @@ export const AdminManagementPage: React.FC = () => {
     return sampleClubs.filter(club => club.assignedAdminId === adminId);
   };
 
+    const { mode } = useTheme();
+  
   return (
     <Box sx={{ p: 3, position: 'relative', minHeight: '100%' }}>
       <motion.div
@@ -188,7 +191,7 @@ export const AdminManagementPage: React.FC = () => {
                       <Typography variant="h6" sx={{ color: '#3b82f6', fontWeight: 'bold' }}>
                         {admin.name}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+<Typography variant="body2" sx={{ color: '#888' }}>
                         {admin.email}
                       </Typography>
                     </Box>
@@ -213,7 +216,7 @@ export const AdminManagementPage: React.FC = () => {
                       <Typography variant="h4" sx={{ color: '#3b82f6', fontWeight: 'bold' }}>
                         {stats.clubs}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                      <Typography variant="body2" sx={{ color: mode === 'dark' ? 'rgba(255, 255, 255, 0.7)' : '#000000' }}>
                         Clubs
                       </Typography>
                     </Box>
@@ -221,7 +224,7 @@ export const AdminManagementPage: React.FC = () => {
                       <Typography variant="h4" sx={{ color: '#10b981', fontWeight: 'bold' }}>
                         {stats.visitors}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                      <Typography variant="body2" sx={{ color: mode === 'dark' ? 'rgba(255, 255, 255, 0.7)' : '#000000' }}>
                         Visitors
                       </Typography>
                     </Box>
@@ -229,7 +232,7 @@ export const AdminManagementPage: React.FC = () => {
                       <Typography variant="h4" sx={{ color: '#f59e0b', fontWeight: 'bold' }}>
                         ₹{(stats.revenue / 1000).toFixed(0)}k
                       </Typography>
-                      <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                      <Typography variant="body2" sx={{ color: mode === 'dark' ? 'rgba(255, 255, 255, 0.7)' : '#000000' }}>
                         Revenue
                       </Typography>
                     </Box>
@@ -238,7 +241,7 @@ export const AdminManagementPage: React.FC = () => {
                   {adminClubs.length > 0 && (
                     <>
                       <Divider sx={{ my: 2, borderColor: 'rgba(59, 130, 246, 0.2)' }} />
-                      <Typography variant="h6" sx={{ color: '#3b82f6', mb: 1, fontSize: '0.875rem' }}>
+<Typography variant="h6" sx={{ color: '#888' }}>
                         Assigned Clubs
                       </Typography>
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
