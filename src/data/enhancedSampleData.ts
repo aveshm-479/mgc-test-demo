@@ -327,6 +327,7 @@ export const enhancedProducts: Product[] = [
 export const enhancedExpenses: Expense[] = [
   {
     id: 'expense-1',
+    name: 'Electricity Bill - July',
     description: 'Electricity Bill - July',
     amount: 5000,
     date: new Date('2024-07-01'),
@@ -335,6 +336,7 @@ export const enhancedExpenses: Expense[] = [
   },
   {
     id: 'expense-2',
+    name: 'Equipment Maintenance - Treadmills',
     description: 'Equipment Maintenance - Treadmills',
     amount: 3000,
     date: new Date('2024-07-05'),
@@ -343,6 +345,7 @@ export const enhancedExpenses: Expense[] = [
   },
   {
     id: 'expense-3',
+    name: 'Cleaning Supplies - Monthly',
     description: 'Cleaning Supplies - Monthly',
     amount: 1500,
     date: new Date('2024-07-10'),
@@ -351,6 +354,7 @@ export const enhancedExpenses: Expense[] = [
   },
   {
     id: 'expense-4',
+    name: 'Facebook Ads Campaign',
     description: 'Facebook Ads Campaign',
     amount: 2500,
     date: new Date('2024-07-08'),
@@ -359,6 +363,7 @@ export const enhancedExpenses: Expense[] = [
   },
   {
     id: 'expense-5',
+    name: 'Staff Salary - July',
     description: 'Staff Salary - July',
     amount: 15000,
     date: new Date('2024-07-25'),
@@ -367,6 +372,7 @@ export const enhancedExpenses: Expense[] = [
   },
   {
     id: 'expense-6',
+    name: 'New Dumbbells Set',
     description: 'New Dumbbells Set',
     amount: 8000,
     date: new Date('2024-07-12'),
@@ -375,6 +381,7 @@ export const enhancedExpenses: Expense[] = [
   },
   {
     id: 'expense-7',
+    name: 'Water Bill - July',
     description: 'Water Bill - July',
     amount: 1200,
     date: new Date('2024-07-03'),
@@ -383,6 +390,7 @@ export const enhancedExpenses: Expense[] = [
   },
   {
     id: 'expense-8',
+    name: 'Yoga Mats Replacement',
     description: 'Yoga Mats Replacement',
     amount: 2200,
     date: new Date('2024-07-15'),

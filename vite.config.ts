@@ -3,12 +3,25 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/mgc-test-demo/',
+  base: '/megical-community/',
   plugins: [react()],
-   server: {
-    host: true,
-    strictPort: false,
-    // Optionally, you can also set allowedHosts to 'all' to allow all hosts
-    allowedHosts: true
-  }
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor libraries
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'mui-vendor': ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
+          'framer-motion': ['framer-motion'],
+          'date-fns': ['date-fns'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000, // Increase warning limit to 1000kb
+    target: 'es2020',
+    minify: true,
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
+  },
 })

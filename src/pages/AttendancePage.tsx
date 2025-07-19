@@ -3,9 +3,6 @@ import { motion } from 'framer-motion';
 import {
   Box,
   Typography,
-  Button,
-  Card,
-  CardContent,
   Grid,
   Table,
   TableBody,
@@ -15,348 +12,314 @@ import {
   TableRow,
   Chip,
   Avatar,
-  IconButton,
-  TextField
+  TextField,
+  Fab,
+  Tooltip
 } from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import {
-  CheckCircle as CheckIcon,
-  Cancel as CancelIcon
+  Groups as GroupsIcon,
+  HowToReg as PresentIcon,
+  PersonOff as AbsentIcon,
+  Business as BusinessIcon
 } from '@mui/icons-material';
 import { useApp } from '../hooks/useApp';
-import type { Attendance } from '../types';
+import { useTheme } from '../hooks/useTheme';
+import { ModernCard } from '../components/ui/ModernCard';
+import { useAuth } from '../hooks/useAuth';
 
-// NEW: Attendance management system
 export const AttendancePage: React.FC = () => {
-  const { visitors, attendance, currentClub, refreshData } = useApp();
+  const { visitors, attendance, currentClub, clubs } = useApp();
+  const { mode } = useTheme();
+  const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  // Filter attendance for current club and date
-  const clubVisitors = visitors.filter(v => v.clubId === currentClub?.id);
-  const todayAttendance = attendance.filter(a => {
+  // Get clubs based on user role
+  const visibleClubs = user?.role === 'super_admin' 
+    ? clubs 
+    : clubs.filter(club => club.id === currentClub?.id || club.createdBy === user?.id);
+
+  // Get attendance stats for each club
+  const clubStats = visibleClubs.map(club => {
+    const clubMembers = visitors.filter(v => v.clubId === club.id && v.type === 'member');
+    const clubAttendance = attendance.filter(a => {
     const attendanceDate = new Date(a.date);
-    return a.clubId === currentClub?.id && 
-           attendanceDate.toDateString() === selectedDate.toDateString();
+      return a.clubId === club.id && attendanceDate.toDateString() === selectedDate.toDateString();
+    });
+
+    return {
+      club,
+      totalMembers: clubMembers.length,
+      present: clubAttendance.filter(a => a.status === 'present').length,
+      absent: clubAttendance.filter(a => a.status === 'absent').length,
+      attendanceRate: clubMembers.length > 0 
+        ? Math.round((clubAttendance.filter(a => a.status === 'present').length / clubMembers.length) * 100)
+        : 0
+    };
   });
 
-  // Get attendance stats
-  const stats = {
-    totalMembers: clubVisitors.filter(v => v.type === 'member').length,
-    present: todayAttendance.filter(a => a.status === 'present').length,
-    absent: todayAttendance.filter(a => a.status === 'absent').length,
-    attendanceRate: todayAttendance.length > 0 
-      ? Math.round((todayAttendance.filter(a => a.status === 'present').length / todayAttendance.length) * 100)
+  // Calculate total stats
+  const totalStats = {
+    totalMembers: clubStats.reduce((sum, stat) => sum + stat.totalMembers, 0),
+    present: clubStats.reduce((sum, stat) => sum + stat.present, 0),
+    absent: clubStats.reduce((sum, stat) => sum + stat.absent, 0),
+    attendanceRate: clubStats.length > 0
+      ? Math.round(clubStats.reduce((sum, stat) => sum + stat.attendanceRate, 0) / clubStats.length)
       : 0
   };
 
-  const getAttendanceStatus = (visitorId: string) => {
-    const record = todayAttendance.find(a => a.visitorId === visitorId);
-    return record?.status || 'not_marked';
-  };
-
-  const handleMarkAttendance = (visitorId: string, status: 'present' | 'absent') => {
-    // NEW: Create or update attendance record
-    const existingRecord = todayAttendance.find(a => a.visitorId === visitorId);
-    
-    if (existingRecord) {
-      // Update existing record
-      attendance.map(a => 
-        a.id === existingRecord.id 
-          ? { ...a, status, date: selectedDate }
-          : a
-      );
-      // In real app, this would be an API call
-      refreshData();
-    } else {
-      // Create new record
-      const newAttendance: Attendance = {
-        id: `att-${Date.now()}`,
-        visitorId,
-        clubId: currentClub?.id || '',
-        date: selectedDate,
-        status
-      };
-      // In real app, this would be an API call
-      console.log('Creating attendance:', newAttendance);
-      refreshData();
-    }
-  };
-
-  const handleBulkAttendance = (status: 'present' | 'absent') => {
-    // NEW: Mark all members at once
-    const members = clubVisitors.filter(v => v.type === 'member');
-    members.forEach(member => {
-      if (getAttendanceStatus(member.id) === 'not_marked') {
-        handleMarkAttendance(member.id, status);
-      }
-    });
-  };
-
-  const getStatusColor = (status: string) => {
-    switch(status) {
-      case 'present': return '#4CAF50';
-      case 'absent': return '#F44336';
-      default: return '#9E9E9E';
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch(status) {
-      case 'present': return 'Present';
-      case 'absent': return 'Absent';
-      default: return 'Not Marked';
-    }
-  };
-
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Box sx={{ 
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%)',
-        p: 3
-      }}>
+    <Box sx={{ p: 3, position: 'relative', minHeight: '100%' }}>
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-            <Typography variant="h4" sx={{ color: '#FFD700', fontWeight: 'bold' }}>
-              Attendance Tracking
+        <Typography variant="h4" sx={{ 
+          color: mode === 'dark' ? '#3b82f6' : '#2563eb',
+          fontWeight: 'bold',
+          mb: 4 
+        }}>
+          Attendance Overview
+        </Typography>
+      </motion.div>
+
+      {/* Stats Grid */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <ModernCard>
+            <Box sx={{ textAlign: 'center' }}>
+              <BusinessIcon sx={{ color: mode === 'dark' ? '#3b82f6' : '#2563eb', fontSize: 32, mb: 1 }} />
+              <Typography variant="h4" sx={{ 
+                color: mode === 'dark' ? '#3b82f6' : '#2563eb',
+                fontWeight: 'bold' 
+              }}>
+                {visibleClubs.length}
             </Typography>
-            <Typography variant="h6" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-              {currentClub?.name}
+              <Typography variant="body2" sx={{ color: mode === 'dark' ? '#94A3B8' : '#64748B' }}>
+                Total Clubs
             </Typography>
           </Box>
-
-          {/* Stats Cards */}
-          <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Card sx={{
-                background: 'rgba(255, 215, 0, 0.1)',
-                border: '1px solid rgba(255, 215, 0, 0.2)',
-                borderRadius: '12px'
+          </ModernCard>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <ModernCard>
+            <Box sx={{ textAlign: 'center' }}>
+              <GroupsIcon sx={{ color: mode === 'dark' ? '#3b82f6' : '#2563eb', fontSize: 32, mb: 1 }} />
+              <Typography variant="h4" sx={{ 
+                color: mode === 'dark' ? '#3b82f6' : '#2563eb',
+                fontWeight: 'bold' 
               }}>
-                <CardContent sx={{ textAlign: 'center' }}>
-                  <Typography variant="h4" sx={{ color: '#FFD700', fontWeight: 'bold' }}>
-                    {stats.totalMembers}
+                {totalStats.totalMembers}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+              <Typography variant="body2" sx={{ color: mode === 'dark' ? '#94A3B8' : '#64748B' }}>
                     Total Members
                   </Typography>
-                </CardContent>
-              </Card>
+            </Box>
+          </ModernCard>
             </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Card sx={{
-                background: 'rgba(76, 175, 80, 0.1)',
-                border: '1px solid rgba(76, 175, 80, 0.2)',
-                borderRadius: '12px'
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <ModernCard>
+            <Box sx={{ textAlign: 'center' }}>
+              <PresentIcon sx={{ color: mode === 'dark' ? '#3b82f6' : '#2563eb', fontSize: 32, mb: 1 }} />
+              <Typography variant="h4" sx={{ 
+                color: mode === 'dark' ? '#3b82f6' : '#2563eb',
+                fontWeight: 'bold' 
               }}>
-                <CardContent sx={{ textAlign: 'center' }}>
-                  <Typography variant="h4" sx={{ color: '#4CAF50', fontWeight: 'bold' }}>
-                    {stats.present}
+                {totalStats.present}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+              <Typography variant="body2" sx={{ color: mode === 'dark' ? '#94A3B8' : '#64748B' }}>
                     Present Today
                   </Typography>
-                </CardContent>
-              </Card>
+            </Box>
+          </ModernCard>
             </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Card sx={{
-                background: 'rgba(244, 67, 54, 0.1)',
-                border: '1px solid rgba(244, 67, 54, 0.2)',
-                borderRadius: '12px'
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <ModernCard>
+            <Box sx={{ textAlign: 'center' }}>
+              <AbsentIcon sx={{ color: mode === 'dark' ? '#3b82f6' : '#2563eb', fontSize: 32, mb: 1 }} />
+              <Typography variant="h4" sx={{ 
+                color: mode === 'dark' ? '#3b82f6' : '#2563eb',
+                fontWeight: 'bold' 
               }}>
-                <CardContent sx={{ textAlign: 'center' }}>
-                  <Typography variant="h4" sx={{ color: '#F44336', fontWeight: 'bold' }}>
-                    {stats.absent}
+                {totalStats.absent}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+              <Typography variant="body2" sx={{ color: mode === 'dark' ? '#94A3B8' : '#64748B' }}>
                     Absent Today
                   </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Card sx={{
-                background: 'rgba(33, 150, 243, 0.1)',
-                border: '1px solid rgba(33, 150, 243, 0.2)',
-                borderRadius: '12px'
-              }}>
-                <CardContent sx={{ textAlign: 'center' }}>
-                  <Typography variant="h4" sx={{ color: '#2196F3', fontWeight: 'bold' }}>
-                    {stats.attendanceRate}%
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    Attendance Rate
-                  </Typography>
-                </CardContent>
-              </Card>
+            </Box>
+          </ModernCard>
             </Grid>
           </Grid>
 
-          {/* Date Selector and Bulk Actions */}
-          <Card sx={{
-            background: 'rgba(26, 26, 26, 0.8)',
-            backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 215, 0, 0.2)',
-            borderRadius: '12px',
-            mb: 3
-          }}>
-            <CardContent>
-              <Grid container spacing={3} alignItems="center">
-                <Grid size={{ xs: 12, sm: 4 }}>
-                  <Typography variant="h6" sx={{ color: '#FFD700', mb: 2 }}>
-                    Select Date
+      {/* Combined Club List with Date Selection */}
+      <ModernCard>
+        <Box sx={{ mb: 4 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+            <Typography variant="h6" sx={{ 
+              color: mode === 'dark' ? '#3b82f6' : '#2563eb'
+            }}>
+              Club Attendance for {selectedDate.toLocaleDateString()}
                   </Typography>
+            <Box sx={{ width: '200px' }}>
                   <TextField
                     type="date"
+                fullWidth
+                size="small"
                     value={selectedDate.toISOString().split('T')[0]}
                     onChange={(e) => setSelectedDate(new Date(e.target.value))}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        color: '#FFD700',
-                        '& fieldset': { borderColor: 'rgba(255, 215, 0, 0.3)' },
-                        '&:hover fieldset': { borderColor: '#FFD700' },
+                InputProps={{
+                  sx: { 
+                    color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: mode === 'dark' ? '#475569' : '#E2E8F0'
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: mode === 'dark' ? '#3b82f6' : '#2563eb'
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: mode === 'dark' ? '#3b82f6' : '#2563eb'
+                    }
                       }
                     }}
                   />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 8 }}>
-                  <Typography variant="h6" sx={{ color: '#FFD700', mb: 2 }}>
-                    Quick Actions
-                  </Typography>
-                  <Box sx={{ display: 'flex', gap: 2 }}>
-                    <Button
-                      variant="contained"
-                      startIcon={<CheckIcon />}
-                      onClick={() => handleBulkAttendance('present')}
-                      sx={{
-                        background: 'linear-gradient(135deg, #4CAF50, #45a049)',
-                        color: 'white',
-                        fontWeight: 600
-                      }}
-                    >
-                      Mark All Present
-                    </Button>
-                    <Button
-                      variant="contained"
-                      startIcon={<CancelIcon />}
-                      onClick={() => handleBulkAttendance('absent')}
-                      sx={{
-                        background: 'linear-gradient(135deg, #F44336, #e53935)',
-                        color: 'white',
-                        fontWeight: 600
-                      }}
-                    >
-                      Mark All Absent
-                    </Button>
+            </Box>
+          </Box>
                   </Box>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
 
-          {/* Attendance Table */}
-          <Card sx={{
-            background: 'rgba(26, 26, 26, 0.8)',
-            backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 215, 0, 0.2)',
-            borderRadius: '12px'
-          }}>
-            <CardContent>
-              <Typography variant="h6" sx={{ color: '#FFD700', mb: 3 }}>
-                Member Attendance for {selectedDate.toLocaleDateString()}
-              </Typography>
               <TableContainer>
                 <Table>
                   <TableHead>
-                    <TableRow sx={{ background: 'rgba(255, 215, 0, 0.1)' }}>
-                      <TableCell sx={{ color: '#FFD700', fontWeight: 'bold' }}>Member</TableCell>
-                      <TableCell sx={{ color: '#FFD700', fontWeight: 'bold' }}>Contact</TableCell>
-                      <TableCell sx={{ color: '#FFD700', fontWeight: 'bold' }}>Status</TableCell>
-                      <TableCell sx={{ color: '#FFD700', fontWeight: 'bold' }}>Actions</TableCell>
+              <TableRow>
+                <TableCell sx={{ 
+                  color: mode === 'dark' ? '#3b82f6' : '#2563eb',
+                  borderBottom: `1px solid ${mode === 'dark' ? '#475569' : '#E2E8F0'}`
+                }}>
+                  Club Name
+                </TableCell>
+                <TableCell sx={{ 
+                  color: mode === 'dark' ? '#3b82f6' : '#2563eb',
+                  borderBottom: `1px solid ${mode === 'dark' ? '#475569' : '#E2E8F0'}`
+                }}>
+                  Total Members
+                </TableCell>
+                <TableCell sx={{ 
+                  color: mode === 'dark' ? '#3b82f6' : '#2563eb',
+                  borderBottom: `1px solid ${mode === 'dark' ? '#475569' : '#E2E8F0'}`
+                }}>
+                  Present
+                </TableCell>
+                <TableCell sx={{ 
+                  color: mode === 'dark' ? '#3b82f6' : '#2563eb',
+                  borderBottom: `1px solid ${mode === 'dark' ? '#475569' : '#E2E8F0'}`
+                }}>
+                  Absent
+                </TableCell>
+                <TableCell sx={{ 
+                  color: mode === 'dark' ? '#3b82f6' : '#2563eb',
+                  borderBottom: `1px solid ${mode === 'dark' ? '#475569' : '#E2E8F0'}`
+                }}>
+                  Attendance Rate
+                </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {clubVisitors
-                      .filter(v => v.type === 'member')
-                      .map((visitor, index) => {
-                        const status = getAttendanceStatus(visitor.id);
-                        return (
-                          <motion.tr
-                            key={visitor.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, delay: index * 0.1 }}
-                          >
-                            <TableCell>
+              {clubStats.map((stat) => (
+                <TableRow key={stat.club.id}>
+                  <TableCell sx={{
+                    borderBottom: `1px solid ${mode === 'dark' ? '#475569' : '#E2E8F0'}`
+                  }}>
                               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                <Avatar sx={{ bgcolor: '#FFD700', color: '#000' }}>
-                                  {visitor.name.charAt(0)}
+                      <Avatar sx={{ 
+                        bgcolor: mode === 'dark' ? '#3b82f6' : '#2563eb'
+                      }}>
+                        {stat.club.name.charAt(0)}
                                 </Avatar>
-                                <Box>
-                                  <Typography sx={{ color: '#FFD700', fontWeight: 'medium' }}>
-                                    {visitor.name}
+                      <Typography sx={{ 
+                        color: mode === 'dark' ? '#F8FAFC' : '#0F172A'
+                      }}>
+                        {stat.club.name}
                                   </Typography>
-                                  <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                                    Member ID: {visitor.id.slice(-4)}
-                                  </Typography>
-                                </Box>
                               </Box>
                             </TableCell>
-                            <TableCell>
-                              <Typography sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                                {visitor.mobile}
-                              </Typography>
+                  <TableCell sx={{
+                    color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
+                    borderBottom: `1px solid ${mode === 'dark' ? '#475569' : '#E2E8F0'}`
+                  }}>
+                    {stat.totalMembers}
                             </TableCell>
-                            <TableCell>
+                  <TableCell sx={{
+                    borderBottom: `1px solid ${mode === 'dark' ? '#475569' : '#E2E8F0'}`
+                  }}>
                               <Chip
-                                label={getStatusLabel(status)}
+                      label={stat.present}
                                 sx={{
-                                  backgroundColor: getStatusColor(status),
-                                  color: status === 'not_marked' ? '#000' : '#fff',
-                                  fontWeight: 600
-                                }}
-                                size="small"
+                        bgcolor: mode === 'dark' ? '#3b82f620' : '#2563eb20',
+                        color: mode === 'dark' ? '#3b82f6' : '#2563eb',
+                        fontWeight: 600,
+                        borderRadius: '6px'
+                      }}
                               />
                             </TableCell>
-                            <TableCell>
-                              <Box sx={{ display: 'flex', gap: 1 }}>
-                                <IconButton
-                                  onClick={() => handleMarkAttendance(visitor.id, 'present')}
+                  <TableCell sx={{
+                    borderBottom: `1px solid ${mode === 'dark' ? '#475569' : '#E2E8F0'}`
+                  }}>
+                    <Chip
+                      label={stat.absent}
                                   sx={{
-                                    color: '#4CAF50',
-                                    '&:hover': { backgroundColor: 'rgba(76, 175, 80, 0.1)' }
-                                  }}
-                                >
-                                  <CheckIcon />
-                                </IconButton>
-                                <IconButton
-                                  onClick={() => handleMarkAttendance(visitor.id, 'absent')}
-                                  sx={{
-                                    color: '#F44336',
-                                    '&:hover': { backgroundColor: 'rgba(244, 67, 54, 0.1)' }
-                                  }}
-                                >
-                                  <CancelIcon />
-                                </IconButton>
-                              </Box>
+                        bgcolor: mode === 'dark' ? '#3b82f620' : '#2563eb20',
+                        color: mode === 'dark' ? '#3b82f6' : '#2563eb',
+                        fontWeight: 600,
+                        borderRadius: '6px'
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell sx={{
+                    borderBottom: `1px solid ${mode === 'dark' ? '#475569' : '#E2E8F0'}`
+                  }}>
+                    <Typography sx={{ 
+                      color: mode === 'dark' ? '#3b82f6' : '#2563eb',
+                      fontWeight: 'bold'
+                    }}>
+                      {stat.attendanceRate}%
+                    </Typography>
                             </TableCell>
-                          </motion.tr>
-                        );
-                      })}
+                </TableRow>
+              ))}
                   </TableBody>
                 </Table>
               </TableContainer>
-            </CardContent>
-          </Card>
-        </motion.div>
+      </ModernCard>
+
+      {/* Floating Action Button */}
+      <Tooltip title="Mark Attendance" placement="left">
+        <Fab
+          color="primary"
+          onClick={() => {/* Add your attendance marking logic here */}}
+          sx={{
+            position: 'fixed',
+            bottom: 32,
+            right: 32,
+            background: mode === 'dark'
+              ? 'linear-gradient(135deg, #3b82f6, #2563eb)'
+              : 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+            color: 'white',
+            boxShadow: mode === 'dark'
+              ? '0 4px 12px rgba(59, 130, 246, 0.5)'
+              : '0 4px 12px rgba(37, 99, 235, 0.5)',
+            '&:hover': {
+              background: mode === 'dark'
+                ? 'linear-gradient(135deg, #2563eb, #1d4ed8)'
+                : 'linear-gradient(135deg, #1d4ed8, #1e40af)',
+              boxShadow: mode === 'dark'
+                ? '0 6px 16px rgba(59, 130, 246, 0.6)'
+                : '0 6px 16px rgba(37, 99, 235, 0.6)'
+            }
+          }}
+        >
+          <PresentIcon />
+        </Fab>
+      </Tooltip>
       </Box>
-    </LocalizationProvider>
   );
 };

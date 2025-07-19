@@ -6,6 +6,7 @@ export interface User {
   role: 'super_admin' | 'admin';
   createdAt: Date;
   createdBy?: string; // ID of the admin who created this user
+  assignedClubs?: string[]; // Array of club IDs assigned to this admin
 }
 
 // Club Types
@@ -17,6 +18,7 @@ export interface Club {
   email: string;
   assignedAdminId: string;
   createdAt: Date;
+  createdBy?: string;
   settings: ClubSettings;
 }
 
@@ -76,11 +78,35 @@ export interface Attendance {
 export interface Product {
   id: string;
   name: string;
-  category: 'shake' | 'vitamin' | 'supplement';
-  price: number;
-  stock: number;
-  minStock: number;
+  category?: string;
+  stock?: number;
+  minStock?: number;
+  clubId?: string;
+  price?: number;
+}
+
+// Inventory Types
+export interface ConsumptionLog {
+  id: string;
+  productId: string;
   clubId: string;
+  quantity: number;
+  consumedBy: string; // User ID of Club Admin
+  consumptionDate: Date;
+}
+
+export interface InventoryReportItem {
+  productId: string;
+  productName: string;
+  totalConsumedQuantity: number;
+  unit: string;
+  clubName: string;
+  clubId: string;
+}
+
+export interface DailyConsumptionReport {
+  date: Date;
+  items: InventoryReportItem[];
 }
 
 export interface StockUsage {
@@ -88,18 +114,20 @@ export interface StockUsage {
   productId: string;
   quantity: number;
   date: Date;
-  visitorId?: string;
+  consumedBy: string; // User ID of Club Admin
   clubId: string;
 }
 
 // Expense Types
 export interface Expense {
   id: string;
+  name: string;
   description: string;
   amount: number;
   date: Date;
   category: string;
   clubId: string;
+  paymentType?: 'cash' | 'upi' | 'card';
 }
 
 // Dashboard Types
@@ -136,4 +164,23 @@ export interface AppContextType {
   refreshData: () => void;
   addVisitor: (visitorData: Partial<Visitor>) => void;
   updateVisitor: (visitorId: string, visitorData: Partial<Visitor>) => void;
+  stockUsage: StockUsage[];
+  dailyConsumptionReports: DailyConsumptionReport[];
+  addProduct: (productData: Partial<Product>) => void;
+  logConsumption: (logData: Partial<StockUsage>) => void;
+  getDailyConsumptionReport: (date: Date) => DailyConsumptionReport | undefined;
+  getOverallConsumedProductCount: () => number;
+}
+
+// Subscription Types
+export interface Subscription {
+  id: string;
+  name: string;
+  price: number;
+  duration: number; // in months
+  description: string;
+  features: string[];
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }

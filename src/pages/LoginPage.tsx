@@ -39,13 +39,13 @@ const CredentialCard: React.FC<CredentialCardProps> = ({ role, email, password, 
         sx={{
           background: 'rgba(26, 26, 26, 0.8)',
           backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 215, 0, 0.2)',
+          border: '1px solid rgba(59, 130, 246, 0.2)', // Replaced gold
           borderRadius: '12px',
           cursor: 'pointer',
           transition: 'all 0.3s ease',
           '&:hover': {
-            background: 'rgba(255, 215, 0, 0.1)',
-            borderColor: 'rgba(255, 215, 0, 0.4)',
+            background: 'rgba(59, 130, 246, 0.1)',
+            borderColor: 'rgba(59, 130, 246, 0.4)',
             transform: 'translateY(-2px)',
           }
         }}
@@ -88,7 +88,7 @@ export const LoginPage: React.FC = () => {
     try {
       const success = await login(email, password);
       if (success) {
-        navigate('/mgc-test-demo/dashboard');
+        navigate('/dashboard');
       } else {
         setError('Invalid email or password');
       }
@@ -105,7 +105,7 @@ export const LoginPage: React.FC = () => {
   };
 
   const demoCredentials = [
-    { role: 'Super Admin', email: 'super@magicalcommunity.com', password: 'admin123', color: '#FFD700' },
+    { role: 'Super Admin', email: 'super@magicalcommunity.com', password: 'admin123', color: '#3b82f6' }, // Replaced gold
     { role: 'Admin', email: 'admin1@magicalcommunity.com', password: 'admin123', color: '#4CAF50' },
     { role: 'Admin', email: 'admin2@magicalcommunity.com', password: 'admin123', color: '#2196F3' },
   ];
@@ -128,7 +128,7 @@ export const LoginPage: React.FC = () => {
         style={{ width: '100%', maxWidth: 400 }}
       >
         <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <Typography variant="h4" sx={{ color: '#FFD700', fontWeight: 'bold', mb: 1 }}>
+          <Typography variant="h4" sx={{ color: '#3b82f6', fontWeight: 'bold', mb: 1 }}>
             Welcome Back
           </Typography>
           <Typography variant="h6" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
@@ -140,7 +140,7 @@ export const LoginPage: React.FC = () => {
           sx={{
             background: 'rgba(26, 26, 26, 0.8)',
             backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 215, 0, 0.2)',
+            border: '1px solid rgba(59, 130, 246, 0.2)', // Replaced gold
             borderRadius: '16px',
             p: 4,
           }}
@@ -148,7 +148,7 @@ export const LoginPage: React.FC = () => {
           <form ref={formRef} onSubmit={handleSubmit}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
               <Box>
-                <Typography variant="body2" sx={{ color: '#FFD700', mb: 1, fontWeight: 600 }}>
+                <Typography variant="body2" sx={{ color: '#3b82f6', mb: 1, fontWeight: 600 }}>
                   Email Address
                 </Typography>
                 <TextField
@@ -162,32 +162,32 @@ export const LoginPage: React.FC = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <EmailIcon sx={{ color: 'rgba(255, 215, 0, 0.7)' }} />
+                        <EmailIcon sx={{ color: 'rgba(59, 130, 246, 0.7)' }} />
                       </InputAdornment>
                     ),
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      color: '#FFD700',
+                      color: '#3b82f6',
                       '& fieldset': {
-                        borderColor: 'rgba(255, 215, 0, 0.3)',
+                        borderColor: 'rgba(59, 130, 246, 0.3)',
                       },
                       '&:hover fieldset': {
-                        borderColor: 'rgba(255, 215, 0, 0.5)',
+                        borderColor: 'rgba(59, 130, 246, 0.5)',
                       },
                       '&.Mui-focused fieldset': {
-                        borderColor: '#FFD700',
+                        borderColor: '#3b82f6',
                       },
                     },
                     '& .MuiInputBase-input::placeholder': {
-                      color: 'rgba(255, 215, 0, 0.5)',
+                      color: 'rgba(59, 130, 246, 0.5)',
                     },
                   }}
                 />
               </Box>
 
               <Box>
-                <Typography variant="body2" sx={{ color: '#FFD700', mb: 1, fontWeight: 600 }}>
+                <Typography variant="body2" sx={{ color: '#3b82f6', mb: 1, fontWeight: 600 }}>
                   Password
                 </Typography>
                 <TextField
@@ -201,7 +201,7 @@ export const LoginPage: React.FC = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <LockIcon sx={{ color: 'rgba(255, 215, 0, 0.7)' }} />
+                        <LockIcon sx={{ color: 'rgba(59, 130, 246, 0.7)' }} />
                       </InputAdornment>
                     ),
                     endAdornment: (
@@ -209,7 +209,7 @@ export const LoginPage: React.FC = () => {
                         <IconButton
                           onClick={() => setShowPassword(!showPassword)}
                           edge="end"
-                          sx={{ color: 'rgba(255, 215, 0, 0.7)' }}
+                          sx={{ color: 'rgba(59, 130, 246, 0.7)' }}
                         >
                           {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
                         </IconButton>
@@ -218,24 +218,24 @@ export const LoginPage: React.FC = () => {
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      color: '#FFD700',
+                      color: '#3b82f6',
                       '& fieldset': {
-                        borderColor: 'rgba(255, 215, 0, 0.3)',
+                        borderColor: 'rgba(59, 130, 246, 0.3)',
                       },
                       '&:hover fieldset': {
-                        borderColor: 'rgba(255, 215, 0, 0.5)',
+                        borderColor: 'rgba(59, 130, 246, 0.5)',
                       },
                       '&.Mui-focused fieldset': {
-                        borderColor: '#FFD700',
+                        borderColor: '#3b82f6',
                       },
                     },
                     '& .MuiInputBase-input::placeholder': {
-                      color: 'rgba(255, 215, 0, 0.5)',
+                      color: 'rgba(59, 130, 246, 0.5)',
                     },
                   }}
                 />
                 <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)', mt: 1, textAlign: 'right' }}>
-                  <a href="#" style={{ color: 'rgba(255, 215, 0, 0.7)', textDecoration: 'none' }}>
+                  <a href="#" style={{ color: 'rgba(59, 130, 246, 0.7)', textDecoration: 'none' }}>
                     Forgot password?
                   </a>
                 </Typography>
@@ -249,61 +249,36 @@ export const LoginPage: React.FC = () => {
 
               <Button
                 type="submit"
-                disabled={loading}
                 fullWidth
+                variant="contained"
+                disabled={loading}
                 sx={{
-                  background: 'linear-gradient(135deg, #FFD700, #FFCA28)',
-                  color: '#000000',
-                  fontWeight: 'bold',
+                  background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                  color: 'white',
+                  fontWeight: 600,
                   py: 1.5,
-                  borderRadius: '8px',
                   '&:hover': {
-                    background: 'linear-gradient(135deg, #FFCA28, #FFD700)',
-                  },
-                  '&:disabled': {
-                    background: 'rgba(255, 215, 0, 0.3)',
-                    color: 'rgba(0, 0, 0, 0.5)',
-                  },
+                    background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                  }
                 }}
               >
-                {loading ? 'Signing in...' : 'Sign In'}
+                {loading ? 'Signing In...' : 'Sign In'}
               </Button>
+
+              <Grid container spacing={2} sx={{ mt: 3 }}>
+                <Grid size={{ xs:12}}>
+                  <Typography variant="h6" sx={{ color: '#3b82f6', textAlign: 'center', mb: 2 }}>
+                    Quick Login (Demo Accounts)
+                  </Typography>
+                </Grid>
+                {demoCredentials.map((cred, index) => (
+                  <Grid size={{ xs:12,sm:4 }} key={index}>
+                    <CredentialCard {...cred} onClick={() => fillCredentials(cred.email, cred.password)} />
+                  </Grid>
+                ))}
+              </Grid>
             </Box>
           </form>
-
-          <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid rgba(255, 215, 0, 0.2)' }}>
-            <Typography variant="h6" sx={{ color: '#FFD700', textAlign: 'center', mb: 2 }}>
-              Demo Credentials
-            </Typography>
-            <Grid container spacing={2}>
-              {demoCredentials.map((cred, index) => (
-                <Grid size={{ xs: 12, md: 8 }} key={index}>
-                  <CredentialCard
-                    role={cred.role}
-                    email={cred.email}
-                    password={cred.password}
-                    color={cred.color}
-                    onClick={() => fillCredentials(cred.email, cred.password)}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-            <Button
-              fullWidth
-              onClick={() => fillCredentials(demoCredentials[0].email, demoCredentials[0].password)}
-              sx={{
-                mt: 2,
-                background: 'rgba(255, 255, 255, 0.1)',
-                color: '#FFD700',
-                border: '1px solid rgba(255, 215, 0, 0.3)',
-                '&:hover': {
-                  background: 'rgba(255, 215, 0, 0.1)',
-                },
-              }}
-            >
-              Use Demo Credentials
-            </Button>
-          </Box>
         </Card>
       </motion.div>
     </Box>

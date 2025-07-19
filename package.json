@@ -1,5 +1,6 @@
 {
-  "name": "mgc-test-cms",
+  "name": "magical-community-cms",
+  "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -8,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "npm run predeploy && gh-pages -d dist"
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@date-io/date-fns": "^3.2.1",
@@ -46,6 +47,6 @@
     "tailwindcss": "^4.1.11",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",
-    "vite": "^7.0.5"
+    "vite": "^7.0.4"
   }
 }

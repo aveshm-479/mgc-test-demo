@@ -1,4 +1,4 @@
-import type { User, Club, Visitor, Product, Expense, Attendance } from '../types';
+import type { User, Club, Visitor, Product, Expense, Attendance, StockUsage, DailyConsumptionReport, Subscription } from '../types';
 
 // Sample Users
 export const sampleUsers: User[] = [
@@ -206,47 +206,132 @@ export const sampleProducts: Product[] = [
   {
     id: 'product-1',
     name: 'Protein Shake - Chocolate',
-    category: 'shake',
-    price: 150,
-    stock: 50,
-    minStock: 10,
-    clubId: 'club-1',
   },
   {
     id: 'product-2',
     name: 'Protein Shake - Vanilla',
-    category: 'shake',
-    price: 150,
-    stock: 45,
-    minStock: 10,
-    clubId: 'club-1',
   },
   {
     id: 'product-3',
     name: 'Multivitamin Complex',
-    category: 'vitamin',
-    price: 800,
-    stock: 25,
-    minStock: 5,
-    clubId: 'club-1',
   },
   {
     id: 'product-4',
     name: 'Whey Protein Powder',
-    category: 'supplement',
-    price: 2500,
-    stock: 15,
-    minStock: 5,
-    clubId: 'club-1',
   },
   {
     id: 'product-5',
     name: 'Protein Shake - Chocolate',
-    category: 'shake',
-    price: 150,
-    stock: 30,
-    minStock: 10,
+  },
+  {
+    id: 'product-6',
+    name: 'Energy Bar',
+  },
+];
+
+// Sample Stock Usage (Consumption Logs)
+export const sampleStockUsage: StockUsage[] = [
+  {
+    id: 'usage-1',
+    productId: 'product-1',
+    clubId: 'club-1',
+    quantity: 5,
+    consumedBy: 'admin-1',
+    date: new Date('2025-07-19'),
+  },
+  {
+    id: 'usage-2',
+    productId: 'product-1',
     clubId: 'club-2',
+    quantity: 3,
+    consumedBy: 'admin-2',
+    date: new Date('2025-07-19'),
+  },
+  {
+    id: 'usage-3',
+    productId: 'product-1',
+    clubId: 'club-3',
+    quantity: 4,
+    consumedBy: 'admin-3',
+    date: new Date('2025-07-19'),
+  },
+  {
+    id: 'usage-4',
+    productId: 'product-2',
+    clubId: 'club-1',
+    quantity: 2,
+    consumedBy: 'admin-1',
+    date: new Date('2025-07-19'),
+  },
+  {
+    id: 'usage-5',
+    productId: 'product-2',
+    clubId: 'club-2',
+    quantity: 1,
+    consumedBy: 'admin-2',
+    date: new Date('2025-07-19'),
+  },
+  {
+    id: 'usage-6',
+    productId: 'product-3',
+    clubId: 'club-1',
+    quantity: 3,
+    consumedBy: 'admin-1',
+    date: new Date('2025-07-19'),
+  },
+  {
+    id: 'usage-7',
+    productId: 'product-3',
+    clubId: 'club-3',
+    quantity: 2,
+    consumedBy: 'admin-3',
+    date: new Date('2025-07-19'),
+  },
+];
+
+// Sample Daily Consumption Reports (can be generated from StockUsage)
+export const sampleDailyConsumptionReports: DailyConsumptionReport[] = [
+  {
+    date: new Date('2025-07-19'),
+    items: [
+      {
+        productId: 'product-1',
+        productName: 'Protein Shake - Chocolate',
+        totalConsumedQuantity: 2,
+        unit: 'units',
+        clubName: 'Magical Wellness Downtown',
+        clubId: 'club-1',
+      },
+      {
+        productId: 'product-1',
+        productName: 'Protein Shake - Chocolate',
+        totalConsumedQuantity: 1,
+        unit: 'units',
+        clubName: 'Magical Wellness Downtown',
+        clubId: 'club-2',
+      },
+      {
+        productId: 'product-1',
+        productName: 'Protein Shake - Chocolate',
+        totalConsumedQuantity: 3,
+        unit: 'units',
+        clubName: 'Magical Wellness Uptown',
+        clubId: 'club-3',
+      },
+    ],
+  },
+  {
+    date: new Date('2025-07-19'),
+    items: [
+      {
+        productId: 'product-1',
+        productName: 'Protein Shake - Chocolate',
+        totalConsumedQuantity: 1,
+        unit: 'units',
+        clubName: 'Magical Wellness Downtown',
+        clubId: 'club-1',
+      },
+    ],
   },
 ];
 
@@ -254,6 +339,7 @@ export const sampleProducts: Product[] = [
 export const sampleExpenses: Expense[] = [
   {
     id: 'expense-1',
+    name: 'Electricity Bill',
     description: 'Electricity Bill',
     amount: 5000,
     date: new Date('2024-07-01'),
@@ -262,6 +348,7 @@ export const sampleExpenses: Expense[] = [
   },
   {
     id: 'expense-2',
+    name: 'Equipment Maintenance',
     description: 'Equipment Maintenance',
     amount: 3000,
     date: new Date('2024-07-05'),
@@ -270,6 +357,7 @@ export const sampleExpenses: Expense[] = [
   },
   {
     id: 'expense-3',
+    name: 'Cleaning Supplies',
     description: 'Cleaning Supplies',
     amount: 1500,
     date: new Date('2024-07-10'),
@@ -301,4 +389,59 @@ export const sampleAttendance: Attendance[] = [
     date: new Date('2024-07-13'),
     status: 'absent',
   },
+];
+
+// Sample Subscriptions
+export const sampleSubscriptions: Subscription[] = [
+  {
+    id: 'sub-1',
+    name: 'Basic Monthly',
+    price: 1999,
+    duration: 1,
+    description: 'Perfect for getting started with basic gym access',
+    features: [
+      'Basic gym access',
+      'Locker access',
+      'Basic fitness assessment'
+    ],
+    isActive: true,
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01')
+  },
+  {
+    id: 'sub-2',
+    name: 'Premium Quarterly',
+    price: 5499,
+    duration: 3,
+    description: 'Great value with additional benefits',
+    features: [
+      'Full gym access',
+      'Locker access',
+      'Personal trainer consultation',
+      'Group classes',
+      'Nutrition guidance'
+    ],
+    isActive: true,
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01')
+  },
+  {
+    id: 'sub-3',
+    name: 'Pro Annual',
+    price: 19999,
+    duration: 12,
+    description: 'Best value with all premium features',
+    features: [
+      'Full gym access',
+      'Premium locker access',
+      'Monthly personal trainer sessions',
+      'Unlimited group classes',
+      'Nutrition consultation',
+      'Spa access',
+      'Guest passes'
+    ],
+    isActive: true,
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01')
+  }
 ];

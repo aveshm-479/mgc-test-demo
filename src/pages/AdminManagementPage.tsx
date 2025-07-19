@@ -13,7 +13,13 @@ import {
   IconButton,
   Tooltip,
   Typography,
-  Divider
+  Divider,
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Fab
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -78,7 +84,7 @@ export const AdminManagementPage: React.FC = () => {
       name: admin.name,
       email: admin.email,
       role: 'admin',
-      assignedClubs: []
+      assignedClubs: admin.assignedClubs || []
     });
     setOpenDialog(true);
   };
@@ -95,6 +101,11 @@ export const AdminManagementPage: React.FC = () => {
       assignedClubs: []
     });
     setEditingAdmin(null);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    resetForm();
   };
 
   const getAdminStats = (adminId: string) => {
@@ -115,31 +126,16 @@ export const AdminManagementPage: React.FC = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 3, position: 'relative', minHeight: '100%' }}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-          <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold' }}>
+          <Typography variant="h4" sx={{ color: '#3b82f6', fontWeight: 'bold' }}>
             Admin Management
           </Typography>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => setOpenDialog(true)}
-            sx={{
-              background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-              color: 'white',
-              fontWeight: 600,
-              '&:hover': {
-                background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-              }
-            }}
-          >
-            Create New Admin
-          </Button>
         </Box>
 
         {/* Stats Overview */}
@@ -189,7 +185,7 @@ export const AdminManagementPage: React.FC = () => {
                       <PersonIcon />
                     </Avatar>
                     <Box>
-                      <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
+                      <Typography variant="h6" sx={{ color: '#3b82f6', fontWeight: 'bold' }}>
                         {admin.name}
                       </Typography>
                       <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
@@ -210,7 +206,7 @@ export const AdminManagementPage: React.FC = () => {
                     </Box>
                   </Box>
 
-                  <Divider sx={{ my: 2, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
+                  <Divider sx={{ my: 2, borderColor: 'rgba(59, 130, 246, 0.2)' }} />
 
                   <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
                     <Box sx={{ textAlign: 'center' }}>
@@ -241,8 +237,8 @@ export const AdminManagementPage: React.FC = () => {
 
                   {adminClubs.length > 0 && (
                     <>
-                      <Divider sx={{ my: 2, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
-                      <Typography variant="h6" sx={{ color: 'white', mb: 1, fontSize: '0.875rem' }}>
+                      <Divider sx={{ my: 2, borderColor: 'rgba(59, 130, 246, 0.2)' }} />
+                      <Typography variant="h6" sx={{ color: '#3b82f6', mb: 1, fontSize: '0.875rem' }}>
                         Assigned Clubs
                       </Typography>
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -252,9 +248,9 @@ export const AdminManagementPage: React.FC = () => {
                             label={club.name}
                             size="small"
                             sx={{
-                              backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                              color: '#3b82f6',
-                              border: '1px solid rgba(59, 130, 246, 0.3)'
+                              bgcolor: '#3b82f6',
+                              color: 'white',
+                              fontWeight: 600,
                             }}
                           />
                         ))}
@@ -286,96 +282,131 @@ export const AdminManagementPage: React.FC = () => {
             </Button>
           </Box>
         )}
-      </motion.div>
 
-      {/* Create/Edit Dialog */}
-      <Dialog 
-        open={openDialog} 
-        onClose={() => setOpenDialog(false)}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
+        {/* Add/Edit Admin Dialog */}
+        <Dialog open={openDialog} onClose={handleCloseDialog} PaperProps={{
           sx: {
-            background: 'rgba(30, 41, 59, 0.95)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: '16px',
+            background: 'rgba(26, 26, 26, 0.9)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(59, 130, 246, 0.2)',
+            borderRadius: '12px',
+            color: 'white'
           }
-        }}
-      >
-        <DialogTitle sx={{ color: 'white', fontWeight: 'bold' }}>
-          {editingAdmin ? 'Edit Admin' : 'Create New Admin'}
-        </DialogTitle>
-        <DialogContent>
-          <Box sx={{ pt: 2 }}>
-            <TextField
-              fullWidth
-              label="Name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+        }}>
+          <DialogTitle sx={{ color: '#3b82f6', fontWeight: 'bold' }}>{editingAdmin ? 'Edit Admin' : 'Create New Admin'}</DialogTitle>
+          <DialogContent dividers>
+            <Grid container spacing={2}>
+              <Grid size={{xs:12}}>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  label="Name"
+                  type="text"
+                  fullWidth
+                  variant="outlined"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      color: 'white',
+                      '& fieldset': { borderColor: 'rgba(59, 130, 246, 0.3)' },
+                      '&:hover fieldset': { borderColor: '#3b82f6' },
+                      '&.Mui-focused fieldset': { borderColor: '#3b82f6' },
+                    },
+                    '& .MuiInputLabel-root': { color: 'rgba(255, 255, 255, 0.7)' },
+                  }}
+                />
+              </Grid>
+              <Grid size={{xs:12}}>
+                <TextField
+                  margin="dense"
+                  label="Email"
+                  type="email"
+                  fullWidth
+                  variant="outlined"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      color: 'white',
+                      '& fieldset': { borderColor: 'rgba(59, 130, 246, 0.3)' },
+                      '&:hover fieldset': { borderColor: '#3b82f6' },
+                      '&.Mui-focused fieldset': { borderColor: '#3b82f6' },
+                    },
+                    '& .MuiInputLabel-root': { color: 'rgba(255, 255, 255, 0.7)' },
+                  }}
+                />
+              </Grid>
+              <Grid size={{xs:12}}>
+                <FormControl margin="dense" fullWidth>
+                  <InputLabel sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>Assigned Clubs</InputLabel>
+                  <Select
+                    multiple
+                    value={formData.assignedClubs}
+                    onChange={(e) => setFormData({ ...formData, assignedClubs: e.target.value as string[] })}
+                    renderValue={(selected) => (
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {selected.map((value) => (
+                          <Chip key={value} label={sampleClubs.find(club => club.id === value)?.name || value} size="small" sx={{ bgcolor: '#3b82f6', color: 'white', fontWeight: 600 }} />
+                        ))}
+                      </Box>
+                    )}
+                    sx={{
+                      color: 'white',
+                      '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(59, 130, 246, 0.3)' },
+                      '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#3b82f6' },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#3b82f6' },
+                      '& .MuiSvgIcon-root': { color: 'rgba(255, 255, 255, 0.7)' },
+                    }}
+                  >
+                    {sampleClubs.map((club) => (
+                      <MenuItem key={club.id} value={club.id}>
+                        {club.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+          </DialogContent>
+          <DialogActions sx={{ borderTop: '1px solid rgba(59, 130, 246, 0.2)', p: 2 }}>
+            <Button onClick={handleCloseDialog} sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>Cancel</Button>
+            <Button
+              onClick={editingAdmin ? () => setAdmins(admins.map(a => a.id === editingAdmin.id ? { ...a, ...formData } : a)) : handleCreateAdmin}
+              variant="contained"
               sx={{
-                mb: 2,
-                '& .MuiOutlinedInput-root': {
-                  color: 'white',
-                  '& fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                  },
-                  '&:hover fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
-                  },
-                },
-                '& .MuiInputLabel-root': {
-                  color: 'rgba(255, 255, 255, 0.7)',
-                },
+                background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                color: 'white',
+                fontWeight: 600
               }}
-            />
-            <TextField
-              fullWidth
-              label="Email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              sx={{
-                mb: 2,
-                '& .MuiOutlinedInput-root': {
-                  color: 'white',
-                  '& fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                  },
-                  '&:hover fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
-                  },
-                },
-                '& .MuiInputLabel-root': {
-                  color: 'rgba(255, 255, 255, 0.7)',
-                },
-              }}
-            />
-            <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)', mb: 1 }}>
-              Default password: password123
-            </Typography>
-          </Box>
-        </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 3 }}>
-          <Button 
-            onClick={() => setOpenDialog(false)}
-            sx={{ color: 'rgba(255, 255, 255, 0.7)' }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleCreateAdmin}
-            variant="contained"
+            >
+              {editingAdmin ? 'Save Changes' : 'Create Admin'}
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Floating Action Button */}
+        <Tooltip title="Create New Admin" placement="left">
+          <Fab
+            color="primary"
+            onClick={() => setOpenDialog(true)}
             sx={{
+              position: 'fixed',
+              bottom: 32,
+              right: 32,
               background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
               color: 'white',
-              fontWeight: 600,
+              boxShadow: '0 4px 12px rgba(59, 130, 246, 0.5)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                boxShadow: '0 6px 16px rgba(59, 130, 246, 0.6)'
+              }
             }}
           >
-            {editingAdmin ? 'Update' : 'Create'} Admin
-          </Button>
-        </DialogActions>
-      </Dialog>
+            <AddIcon />
+          </Fab>
+        </Tooltip>
+      </motion.div>
     </Box>
   );
 };

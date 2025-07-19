@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -5,38 +6,37 @@ import {
   Typography,
   Button,
   TextField,
+  Card,
+  CardContent,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  Chip,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  Grid,
-  Card,
-  CardContent,
-  Chip,
-  Avatar,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
   TableContainer,
+  Table,
   TableHead,
   TableRow,
-  Paper,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Tabs,
-  Tab
+  TableCell,
+  TableBody,
+  IconButton,
+  Avatar,
+  Fab,
+  Tooltip
 } from '@mui/material';
+import { Grid } from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
   Phone as PhoneIcon,
   Email as EmailIcon,
-  Download as DownloadIcon
 } from '@mui/icons-material';
 import { useApp } from '../hooks/useApp';
+import { useTheme } from '../hooks/useTheme';
 
 interface VisitorFormData {
   name: string;
@@ -52,11 +52,11 @@ interface VisitorFormData {
 
 export const VisitorsPage: React.FC = () => {
   const { visitors, clubs, addVisitor, updateVisitor } = useApp();
+  const { mode } = useTheme(); // Use the theme hook
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(0);
+  const [editingVisitor, setEditingVisitor] = useState<any>(null);
   const [filterType, setFilterType] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [editingVisitor, setEditingVisitor] = useState<any>(null);
 
   const [formData, setFormData] = useState<VisitorFormData>({
     name: '',
@@ -79,9 +79,9 @@ export const VisitorsPage: React.FC = () => {
 
   const getStatusColor = (type: string) => {
     switch(type) {
-      case 'member': return '#FFD700';
-      case 'trial': return '#FFCA28';
-      default: return '#FFEB3B';
+      case 'member': return mode === 'dark' ? '#3B82F6' : '#2563EB'; 
+      case 'trial': return mode === 'dark' ? '#F59E0B' : '#D97706';
+      default: return mode === 'dark' ? '#94A3B8' : '#64748B'; 
     }
   };
 
@@ -166,27 +166,6 @@ export const VisitorsPage: React.FC = () => {
     handleCloseDialog();
   };
 
-  const handleExport = () => {
-    const csvContent = [
-      ['Name', 'Mobile', 'Email', 'Type', 'Status', 'Amount', 'Date'],
-      ...filteredVisitors.map(v => [
-        v.name,
-        v.mobile,
-        v.email || '',
-        v.type,
-        v.payments?.[0]?.status || 'pending',
-        v.payments?.[0]?.amount || 0,
-        v.visitDate.toLocaleDateString()
-      ])
-    ].map(row => row.join(',')).join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'visitors.csv';
-    a.click();
-  };
 
   const stats = {
     total: filteredVisitors.length,
@@ -203,208 +182,199 @@ export const VisitorsPage: React.FC = () => {
       height: '100vh', 
       display: 'flex', 
       flexDirection: 'column',
-      background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%)'
+      background: mode === 'dark' ? '#0F172A' : '#FFFFFF',
+      position: 'relative'
     }}>
       {/* Header */}
       <Box sx={{ 
         p: 3, 
-        borderBottom: '1px solid rgba(255, 215, 0, 0.2)',
-        background: 'rgba(0, 0, 0, 0.8)',
+        borderBottom: mode === 'dark' ? '1px solid #475569' : '1px solid #E2E8F0',
+        background: mode === 'dark' ? '#1E293B' : '#F8FAFC',
         backdropFilter: 'blur(20px)'
       }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h4" sx={{ color: '#FFD700', fontWeight: 'bold' }}>
+          <Typography variant="h4" sx={{ color: mode === 'dark' ? '#3B82F6' : '#2563EB', fontWeight: 'bold' }}>
             Visitor Management
           </Typography>
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              onClick={() => handleOpenDialog()}
-              sx={{
-                background: 'linear-gradient(135deg, #FFD700, #FFCA28)',
-                color: '#000000',
-                fontWeight: 600,
-                '&:hover': {
-                  background: 'linear-gradient(135deg, #FFCA28, #FFD700)',
-                  transform: 'translateY(-2px)'
-                }
-              }}
-            >
-              Add Visitor
-            </Button>
-            <Button
-              variant="outlined"
-              startIcon={<DownloadIcon />}
-              onClick={handleExport}
-              sx={{
-                borderColor: '#FFD700',
-                color: '#FFD700',
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 215, 0, 0.1)',
-                  borderColor: '#FFCA28'
-                }
-              }}
-            >
-              Export
-            </Button>
-          </Box>
         </Box>
 
-        {/* Stats Cards */}
-        <Grid container spacing={2} sx={{ mt: 2 }}>
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-            <Card sx={{ background: 'rgba(255, 215, 0, 0.1)', border: '1px solid rgba(255, 215, 0, 0.2)' }}>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Typography variant="h4" sx={{ color: '#FFD700', fontWeight: 'bold' }}>
-                  {stats.total}
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                  Total Visitors
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-            <Card sx={{ background: 'rgba(255, 235, 59, 0.1)', border: '1px solid rgba(255, 235, 59, 0.2)' }}>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Typography variant="h4" sx={{ color: '#FFEB3B', fontWeight: 'bold' }}>
-                  {stats.visitors}
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                  Visitors
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-            <Card sx={{ background: 'rgba(255, 202, 40, 0.1)', border: '1px solid rgba(255, 202, 40, 0.2)' }}>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Typography variant="h4" sx={{ color: '#FFCA28', fontWeight: 'bold' }}>
-                  {stats.trials}
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                  Trials
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-            <Card sx={{ background: 'rgba(255, 193, 7, 0.1)', border: '1px solid rgba(255, 193, 7, 0.2)' }}>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Typography variant="h4" sx={{ color: '#FFC107', fontWeight: 'bold' }}>
-                  ₹{stats.revenue.toLocaleString()}
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                  Revenue
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+        {/* Stats */}
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 2, mt: 3 }}>
+          {[
+            {
+              title: 'Total Visitors',
+              value: stats.total
+            },
+            {
+              title: 'Members',
+              value: stats.members
+            },
+            {
+              title: 'Trials',
+              value: stats.trials
+            },
+            {
+              title: 'Revenue',
+              value: `₹${stats.revenue.toLocaleString()}`
+            }
+          ].map((stat, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ 
+                duration: 0.5,
+                delay: index * 0.1,
+                ease: "easeOut"
+              }}
+            >
+              <Card sx={{
+                background: mode === 'dark' ? '#1E293B' : '#F8FAFC',
+                border: mode === 'dark' ? '1px solid #475569' : '1px solid #E2E8F0',
+                borderRadius: '12px',
+                transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: mode === 'dark' ? '0 12px 40px rgba(0, 0, 0, 0.4)' : '0 12px 40px rgba(0, 0, 0, 0.15)',
+                }
+              }}>
+                <CardContent sx={{ textAlign: 'center' }}>
+                  <Typography variant="h6" sx={{ color: mode === 'dark' ? '#94A3B8' : '#64748B', mb: 0.5 }}>{stat.title}</Typography>
+                  <Typography variant="h4" sx={{ color: mode === 'dark' ? '#3B82F6' : '#2563EB', fontWeight: 'bold' }}>{stat.value}</Typography>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </Box>
       </Box>
 
-      {/* Filters and Search */}
-      <Box sx={{ 
-        p: 3, 
-        borderBottom: '1px solid rgba(255, 215, 0, 0.2)',
-        background: 'rgba(0, 0, 0, 0.6)',
-        backdropFilter: 'blur(10px)'
-      }}>
-        <Grid container spacing={2} alignItems="center">
-          <Grid size={{ xs: 12, sm: 4 }}>
-            <TextField
-              fullWidth
-              placeholder="Search by name or mobile..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  color: '#FFD700',
-                  '& fieldset': {
-                    borderColor: 'rgba(255, 215, 0, 0.3)',
-                  },
-                  '&:hover fieldset': {
-                    borderColor: '#FFD700',
-                  },
+      {/* Main Content */}
+      <Box sx={{ flexGrow: 1, p: 3, overflowY: 'auto' }}>
+        {/* Filters and Search */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+          <TextField
+            fullWidth
+            placeholder="Search visitors by name or mobile..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            variant="outlined"
+            size="small"
+            InputProps={{
+              style: { 
+                color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
+              },
+              sx: {
+                '& fieldset': { 
+                  borderColor: mode === 'dark' ? '#475569' : '#E2E8F0',
+                  borderWidth: 1
                 },
-              }}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 4 }}>
-            <FormControl fullWidth>
-              <InputLabel sx={{ color: '#FFD700' }}>Filter by Type</InputLabel>
-              <Select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                sx={{
-                  color: '#FFD700',
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'rgba(255, 215, 0, 0.3)',
-                  },
-                }}
-              >
-                <MenuItem value="all">All</MenuItem>
-                <MenuItem value="visitor">Visitors</MenuItem>
-                <MenuItem value="trial">Trials</MenuItem>
-                <MenuItem value="member">Members</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid size={{ xs: 12, sm: 4 }}>
-            <Tabs
-              value={selectedTab}
-              onChange={(_, newValue) => setSelectedTab(newValue)}
-              sx={{
-                '& .MuiTab-root': {
-                  color: 'rgba(255, 215, 0, 0.7)',
-                  '&.Mui-selected': {
-                    color: '#FFD700',
-                  },
+                '&:hover fieldset': { 
+                  borderColor: mode === 'dark' ? '#94A3B8' : '#64748B'
                 },
-                '& .MuiTabs-indicator': {
-                  backgroundColor: '#FFD700',
+                '&.Mui-focused fieldset': { 
+                  borderColor: mode === 'dark' ? '#3B82F6' : '#2563EB',
+                  borderWidth: 2
+                },
+                borderRadius: 2
+              }
+            }}
+            sx={{
+              mr: { xs: 0, sm: 2 },
+              mb: { xs: 2, sm: 0 },
+              '& .MuiInputBase-input::placeholder': {
+                color: mode === 'dark' ? '#94A3B8' : '#64748B',
+                opacity: 1
+              },
+            }}
+          />
+          <FormControl sx={{ minWidth: 120, mb: { xs: 2, sm: 0 } }} size="small">
+            <InputLabel sx={{ color: mode === 'dark' ? '#94A3B8' : '#64748B' }}>Filter by Type</InputLabel>
+            <Select
+              value={filterType}
+              label="Filter by Type"
+              onChange={(e) => setFilterType(e.target.value as string)}
+              sx={{
+                color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: mode === 'dark' ? '#475569' : '#E2E8F0',
+                },
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor: mode === 'dark' ? '#94A3B8' : '#64748B'
+                },
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: mode === 'dark' ? '#3B82F6' : '#2563EB'
+                },
+                '& .MuiSvgIcon-root': {
+                  color: mode === 'dark' ? '#94A3B8' : '#64748B'
                 },
               }}
             >
-              <Tab label="All" />
-              <Tab label="Today" />
-              <Tab label="This Week" />
-            </Tabs>
-          </Grid>
-        </Grid>
-      </Box>
+              <MenuItem value="all">All Types</MenuItem>
+              <MenuItem value="visitor">Visitor</MenuItem>
+              <MenuItem value="trial">Trial</MenuItem>
+              <MenuItem value="member">Member</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
 
-      {/* Visitors Table */}
-      <Box sx={{ 
-        flex: 1,
-        overflow: 'auto',
-        p: 3
-      }}>
-        <TableContainer component={Paper} sx={{ 
-          background: 'rgba(26, 26, 26, 0.8)',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 215, 0, 0.2)',
-          borderRadius: '12px'
+        {/* Visitors Table */}
+        <TableContainer component={Card} sx={{
+          background: mode === 'dark' ? '#1E293B' : '#F8FAFC',
+          border: mode === 'dark' ? '1px solid #475569' : '1px solid #E2E8F0',
+          borderRadius: '16px',
+          boxShadow: mode === 'dark' ? '0 8px 32px rgba(0, 0, 0, 0.3)' : '0 8px 32px rgba(0, 0, 0, 0.1)',
+          maxHeight: 'calc(100vh - 300px)', // Adjust height as needed
         }}>
-          <Table>
+          <Table stickyHeader aria-label="visitors table">
             <TableHead>
-              <TableRow sx={{ background: 'rgba(255, 215, 0, 0.1)' }}>
-                <TableCell sx={{ color: '#FFD700', fontWeight: 'bold' }}>Visitor</TableCell>
-                <TableCell sx={{ color: '#FFD700', fontWeight: 'bold' }}>Contact</TableCell>
-                <TableCell sx={{ color: '#FFD700', fontWeight: 'bold' }}>Type</TableCell>
-                <TableCell sx={{ color: '#FFD700', fontWeight: 'bold' }}>Payment</TableCell>
-                <TableCell sx={{ color: '#FFD700', fontWeight: 'bold' }}>Date</TableCell>
-                <TableCell sx={{ color: '#FFD700', fontWeight: 'bold' }}>Actions</TableCell>
+              <TableRow sx={{
+                background: mode === 'dark' ? '#334155' : '#F1F5F9',
+              }}>
+                <TableCell sx={{
+                  color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
+                  fontWeight: 'bold',
+                  borderBottom: 'none'
+                }}>Name</TableCell>
+                <TableCell sx={{
+                  color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
+                  fontWeight: 'bold',
+                  borderBottom: 'none'
+                }}>Club & Location</TableCell>
+                <TableCell sx={{
+                  color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
+                  fontWeight: 'bold'
+                }}>Contact</TableCell>
+                <TableCell sx={{
+                  color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
+                  fontWeight: 'bold'
+                }}>Type</TableCell>
+                <TableCell sx={{
+                  color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
+                  fontWeight: 'bold'
+                }}>Payment Status</TableCell>
+                <TableCell sx={{
+                  color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
+                  fontWeight: 'bold'
+                }}>Date</TableCell>
+                <TableCell align="right" sx={{
+                  color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
+                  fontWeight: 'bold'
+                }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredVisitors.map((visitor, index) => (
-                <motion.tr
+                <TableRow
                   key={visitor.id}
+                  component={motion.tr}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
+                  sx={{
+                    '&:nth-of-type(even)': {
+                      background: mode === 'dark' ? 'rgba(0,0,0,0.1)' : 'rgba(241,245,249,0.5)' // subtle zebra striping
+                    }
+                  }}
                 >
                   <TableCell>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -412,174 +382,231 @@ export const VisitorsPage: React.FC = () => {
                         {visitor.name.charAt(0)}
                       </Avatar>
                       <Box>
-                        <Typography sx={{ color: '#FFD700', fontWeight: 'medium' }}>
+                        <Typography sx={{ color: mode === 'dark' ? '#F8FAFC' : '#0F172A', fontWeight: 'medium' }}>
                           {visitor.name}
                         </Typography>
-                        <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                          {visitor.referralSource}
+                        <Typography variant="body2" sx={{ color: mode === 'dark' ? '#94A3B8' : '#64748B' }}>
+                          {visitor.mobile}
                         </Typography>
                       </Box>
                     </Box>
                   </TableCell>
                   <TableCell>
-                    <Box>
-                      <Typography sx={{ color: '#FFD700', display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <PhoneIcon fontSize="small" /> {visitor.mobile}
-                      </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                      <Typography sx={{ color: mode === 'dark' ? '#F8FAFC' : '#0F172A', fontWeight: 'medium' }}>{clubs.find(c => c.id === visitor.clubId)?.name || 'N/A'}</Typography>
+                      <Typography variant="body2" sx={{ color: mode === 'dark' ? '#94A3B8' : '#64748B' }}>{visitor.address}</Typography>
+                    </Box>
+                  </TableCell>
+                  <TableCell>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: mode === 'dark' ? '#94A3B8' : '#64748B' }}>
+                        <PhoneIcon fontSize="small" />
+                        <Typography variant="body2" sx={{ color: 'inherit' }}>{visitor.mobile}</Typography>
+                      </Box>
                       {visitor.email && (
-                        <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)', display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <EmailIcon fontSize="small" /> {visitor.email}
-                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: mode === 'dark' ? '#94A3B8' : '#64748B' }}>
+                          <EmailIcon fontSize="small" />
+                          <Typography variant="body2" sx={{ color: 'inherit' }}>{visitor.email}</Typography>
+                        </Box>
                       )}
                     </Box>
                   </TableCell>
                   <TableCell>
                     <Chip
                       label={getStatusLabel(visitor.type)}
-                      sx={{
-                        backgroundColor: getStatusColor(visitor.type),
-                        color: '#000000',
-                        fontWeight: 600
-                      }}
                       size="small"
+                      sx={{
+                        bgcolor: getStatusColor(visitor.type),
+                        color: mode === 'dark' ? '#000' : '#fff',
+                        fontWeight: 600,
+                      }}
                     />
                   </TableCell>
                   <TableCell>
-                    <Box>
-                      <Typography sx={{ color: '#FFD700', fontWeight: 'bold' }}>
-                        ₹{visitor.payments?.reduce((sum: number, p: any) => sum + p.amount, 0).toLocaleString()}
-                      </Typography>
-                      <Chip
-                        label={visitor.payments?.[0]?.status || 'pending'}
-                        size="small"
-                        sx={{
-                          backgroundColor: getPaymentStatusColor(visitor.payments?.[0]?.status || 'pending'),
-                          color: '#fff',
-                          fontSize: '0.75rem'
-                        }}
-                      />
-                    </Box>
+                    <Chip
+                      label={visitor.payments?.[0]?.status || 'N/A'}
+                      size="small"
+                      sx={{
+                        bgcolor: getPaymentStatusColor(visitor.payments?.[0]?.status || 'pending'),
+                        color: '#fff',
+                        fontWeight: 600,
+                      }}
+                    />
                   </TableCell>
-                  <TableCell>
-                    <Typography sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                      {visitor.visitDate.toLocaleDateString()}
-                    </Typography>
+                  <TableCell sx={{ color: mode === 'dark' ? '#F8FAFC' : '#0F172A' }}>{new Date(visitor.visitDate).toLocaleDateString()}</TableCell>
+                  <TableCell align="right">
+                    <IconButton onClick={() => handleOpenDialog(visitor)} sx={{ color: mode === 'dark' ? '#3B82F6' : '#2563EB' }}>
+                      <EditIcon />
+                    </IconButton>
+                    {/* <IconButton sx={{ color: '#ef4444' }}>
+                      <DeleteIcon />
+                    </IconButton> */}
                   </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                      <IconButton
-                        onClick={() => handleOpenDialog(visitor)}
-                        sx={{ color: '#FFD700', '&:hover': { backgroundColor: 'rgba(255, 215, 0, 0.1)' } }}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    </Box>
-                  </TableCell>
-                </motion.tr>
+                </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
       </Box>
 
-      {/* Add/Edit Dialog */}
-      <Dialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        maxWidth="md"
-        fullWidth
-        PaperProps={{
-          sx: {
-            background: 'rgba(26, 26, 26, 0.95)',
-            backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 215, 0, 0.3)',
-            borderRadius: '16px'
-          }
-        }}
-      >
-        <DialogTitle sx={{ color: '#FFD700', fontWeight: 'bold' }}>
+      {/* Add/Edit Visitor Dialog */}
+      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth PaperProps={{
+        sx: {
+          background: mode === 'dark' ? '#1E293B' : '#F8FAFC',
+          backdropFilter: 'blur(20px)',
+          border: mode === 'dark' ? '1px solid #475569' : '1px solid #E2E8F0',
+          borderRadius: '16px',
+          boxShadow: mode === 'dark' ? '0 8px 32px rgba(0, 0, 0, 0.3)' : '0 8px 32px rgba(0, 0, 0, 0.1)',
+          color: mode === 'dark' ? '#F8FAFC' : '#0F172A'
+        }
+      }}>
+        <DialogTitle sx={{ 
+          color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
+          borderBottom: mode === 'dark' ? '1px solid #475569' : '1px solid #E2E8F0',
+          fontSize: '1.5rem',
+          fontWeight: 'bold'
+        }}>
           {editingVisitor ? 'Edit Visitor' : 'Add New Visitor'}
         </DialogTitle>
-        <DialogContent>
-          <Grid container spacing={3} sx={{ mt: 1 }}>
-            <Grid size={{ xs: 12, sm: 6 }}>
+        <DialogContent dividers sx={{ borderColor: mode === 'dark' ? '#475569' : '#E2E8F0' }}>
+          <Grid container spacing={2} sx={{ mt: 1 }}>
+            <Grid size={{xs:12,sm:6}}>
               <TextField
+                margin="dense"
+                label="Name"
+                type="text"
                 fullWidth
-                label="Full Name"
+                variant="outlined"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+                InputLabelProps={{ style: { color: mode === 'dark' ? '#94A3B8' : '#64748B' } }}
+                InputProps={{ style: { color: mode === 'dark' ? '#F8FAFC' : '#0F172A' } }}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    color: '#FFD700',
-                    '& fieldset': { borderColor: 'rgba(255, 215, 0, 0.3)' },
-                    '&:hover fieldset': { borderColor: '#FFD700' },
+                    '& fieldset': { borderColor: mode === 'dark' ? '#475569' : '#E2E8F0' },
+                    '&:hover fieldset': { borderColor: mode === 'dark' ? '#94A3B8' : '#64748B' },
+                    '&.Mui-focused fieldset': { borderColor: mode === 'dark' ? '#3B82F6' : '#2563EB' },
                   },
-                  '& .MuiInputLabel-root': { color: '#FFD700' }
                 }}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{xs:12,sm:6}}>
               <TextField
-                fullWidth
+                margin="dense"
                 label="Mobile Number"
+                type="text"
+                fullWidth
+                variant="outlined"
                 value={formData.mobile}
                 onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+                required
+                InputLabelProps={{ style: { color: mode === 'dark' ? '#94A3B8' : '#64748B' } }}
+                InputProps={{ style: { color: mode === 'dark' ? '#F8FAFC' : '#0F172A' } }}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    color: '#FFD700',
-                    '& fieldset': { borderColor: 'rgba(255, 215, 0, 0.3)' },
-                    '&:hover fieldset': { borderColor: '#FFD700' },
+                    '& fieldset': { borderColor: mode === 'dark' ? '#475569' : '#E2E8F0' },
+                    '&:hover fieldset': { borderColor: mode === 'dark' ? '#94A3B8' : '#64748B' },
+                    '&.Mui-focused fieldset': { borderColor: mode === 'dark' ? '#3B82F6' : '#2563EB' },
                   },
-                  '& .MuiInputLabel-root': { color: '#FFD700' }
                 }}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{xs:12}}>
               <TextField
+                margin="dense"
+                label="Email Address (Optional)"
+                type="email"
                 fullWidth
-                label="Email"
+                variant="outlined"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                InputLabelProps={{ style: { color: mode === 'dark' ? '#94A3B8' : '#64748B' } }}
+                InputProps={{ style: { color: mode === 'dark' ? '#F8FAFC' : '#0F172A' } }}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    color: '#FFD700',
-                    '& fieldset': { borderColor: 'rgba(255, 215, 0, 0.3)' },
-                    '&:hover fieldset': { borderColor: '#FFD700' },
+                    '& fieldset': { borderColor: mode === 'dark' ? '#475569' : '#E2E8F0' },
+                    '&:hover fieldset': { borderColor: mode === 'dark' ? '#94A3B8' : '#64748B' },
+                    '&.Mui-focused fieldset': { borderColor: mode === 'dark' ? '#3B82F6' : '#2563EB' },
                   },
-                  '& .MuiInputLabel-root': { color: '#FFD700' }
                 }}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <FormControl fullWidth>
-                <InputLabel sx={{ color: '#FFD700' }}>Visit Type</InputLabel>
+            <Grid size={{xs:12}}>
+              <TextField
+                margin="dense"
+                label="Address"
+                type="text"
+                fullWidth
+                variant="outlined"
+                value={formData.address}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                InputLabelProps={{ style: { color: mode === 'dark' ? '#94A3B8' : '#64748B' } }}
+                InputProps={{ style: { color: mode === 'dark' ? '#F8FAFC' : '#0F172A' } }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': { borderColor: mode === 'dark' ? '#475569' : '#E2E8F0' },
+                    '&:hover fieldset': { borderColor: mode === 'dark' ? '#94A3B8' : '#64748B' },
+                    '&.Mui-focused fieldset': { borderColor: mode === 'dark' ? '#3B82F6' : '#2563EB' },
+                  },
+                }}
+              />
+            </Grid>
+            <Grid size={{xs:12,sm:6}}>
+              <TextField
+                margin="dense"
+                label="Referral Source"
+                type="text"
+                fullWidth
+                variant="outlined"
+                value={formData.referralSource}
+                onChange={(e) => setFormData({ ...formData, referralSource: e.target.value })}
+                InputLabelProps={{ style: { color: mode === 'dark' ? '#94A3B8' : '#64748B' } }}
+                InputProps={{ style: { color: mode === 'dark' ? '#F8FAFC' : '#0F172A' } }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': { borderColor: mode === 'dark' ? '#475569' : '#E2E8F0' },
+                    '&:hover fieldset': { borderColor: mode === 'dark' ? '#94A3B8' : '#64748B' },
+                    '&.Mui-focused fieldset': { borderColor: mode === 'dark' ? '#3B82F6' : '#2563EB' },
+                  },
+                }}
+              />
+            </Grid>
+            <Grid size={{xs:12,sm:6}}>
+              <FormControl margin="dense" fullWidth variant="outlined">
+                <InputLabel sx={{ color: mode === 'dark' ? '#94A3B8' : '#64748B' }}>Visitor Type</InputLabel>
                 <Select
                   value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
+                  onChange={(e) => setFormData({ ...formData, type: e.target.value as 'visitor' | 'trial' | 'member' })}
+                  label="Visitor Type"
                   sx={{
-                    color: '#FFD700',
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'rgba(255, 215, 0, 0.3)',
-                    },
+                    color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
+                    '& .MuiOutlinedInput-notchedOutline': { borderColor: mode === 'dark' ? '#475569' : '#E2E8F0' },
+                    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: mode === 'dark' ? '#94A3B8' : '#64748B' },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: mode === 'dark' ? '#3B82F6' : '#2563EB' },
+                    '& .MuiSvgIcon-root': { color: mode === 'dark' ? '#94A3B8' : '#64748B' },
                   }}
                 >
-                  <MenuItem value="visitor">Visitor (Free)</MenuItem>
-                  <MenuItem value="trial">Trial (₹700)</MenuItem>
-                  <MenuItem value="member">Member (₹7500)</MenuItem>
+                  <MenuItem value="visitor">Visitor</MenuItem>
+                  <MenuItem value="trial">Trial</MenuItem>
+                  <MenuItem value="member">Member</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <FormControl fullWidth>
-                <InputLabel sx={{ color: '#FFD700' }}>Club</InputLabel>
+            <Grid size={{xs:12,sm:6}}>
+              <FormControl margin="dense" fullWidth variant="outlined">
+                <InputLabel sx={{ color: mode === 'dark' ? '#94A3B8' : '#64748B' }}>Club</InputLabel>
                 <Select
                   value={formData.clubId}
-                  onChange={(e) => setFormData({ ...formData, clubId: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, clubId: e.target.value as string })}
+                  label="Club"
+                  required
                   sx={{
-                    color: '#FFD700',
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'rgba(255, 215, 0, 0.3)',
-                    },
+                    color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
+                    '& .MuiOutlinedInput-notchedOutline': { borderColor: mode === 'dark' ? '#475569' : '#E2E8F0' },
+                    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: mode === 'dark' ? '#94A3B8' : '#64748B' },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: mode === 'dark' ? '#3B82F6' : '#2563EB' },
+                    '& .MuiSvgIcon-root': { color: mode === 'dark' ? '#94A3B8' : '#64748B' },
                   }}
                 >
                   {clubs.map(club => (
@@ -588,86 +615,101 @@ export const VisitorsPage: React.FC = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{xs:12,sm:6}}>
               <TextField
-                fullWidth
-                label="Amount"
+                margin="dense"
+                label="Amount (INR)"
                 type="number"
-                value={formData.amount}
-                onChange={(e) => setFormData({ ...formData, amount: parseInt(e.target.value) || 0 })}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    color: '#FFD700',
-                    '& fieldset': { borderColor: 'rgba(255, 215, 0, 0.3)' },
-                    '&:hover fieldset': { borderColor: '#FFD700' },
-                  },
-                  '& .MuiInputLabel-root': { color: '#FFD700' }
-                }}
-              />
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <TextField
                 fullWidth
-                label="Address"
-                multiline
-                rows={2}
-                value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                variant="outlined"
+                value={formData.amount}
+                onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })}
+                InputLabelProps={{ style: { color: mode === 'dark' ? '#94A3B8' : '#64748B' } }}
+                InputProps={{ style: { color: mode === 'dark' ? '#F8FAFC' : '#0F172A' } }}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    color: '#FFD700',
-                    '& fieldset': { borderColor: 'rgba(255, 215, 0, 0.3)' },
-                    '&:hover fieldset': { borderColor: '#FFD700' },
+                    '& fieldset': { borderColor: mode === 'dark' ? '#475569' : '#E2E8F0' },
+                    '&:hover fieldset': { borderColor: mode === 'dark' ? '#94A3B8' : '#64748B' },
+                    '&.Mui-focused fieldset': { borderColor: mode === 'dark' ? '#3B82F6' : '#2563EB' },
                   },
-                  '& .MuiInputLabel-root': { color: '#FFD700' }
                 }}
               />
             </Grid>
-            <Grid size={{ xs: 12 }}>
-              <FormControl fullWidth>
-                <InputLabel sx={{ color: '#FFD700' }}>Referral Source</InputLabel>
+            <Grid size={{xs:12,sm:6}} >
+              <FormControl margin="dense" fullWidth variant="outlined">
+                <InputLabel sx={{ color: mode === 'dark' ? '#94A3B8' : '#64748B' }}>Payment Status</InputLabel>
                 <Select
-                  value={formData.referralSource}
-                  onChange={(e) => setFormData({ ...formData, referralSource: e.target.value })}
+                  value={formData.paymentStatus}
+                  onChange={(e) => setFormData({ ...formData, paymentStatus: e.target.value as 'pending' | 'partial' | 'completed' })}
+                  label="Payment Status"
                   sx={{
-                    color: '#FFD700',
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'rgba(255, 215, 0, 0.3)',
-                    },
+                    color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
+                    '& .MuiOutlinedInput-notchedOutline': { borderColor: mode === 'dark' ? '#475569' : '#E2E8F0' },
+                    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: mode === 'dark' ? '#94A3B8' : '#64748B' },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: mode === 'dark' ? '#3B82F6' : '#2563EB' },
+                    '& .MuiSvgIcon-root': { color: mode === 'dark' ? '#94A3B8' : '#64748B' },
                   }}
                 >
-                  <MenuItem value="friend">Friend</MenuItem>
-                  <MenuItem value="family">Family</MenuItem>
-                  <MenuItem value="google">Google</MenuItem>
-                  <MenuItem value="facebook">Facebook</MenuItem>
-                  <MenuItem value="instagram">Instagram</MenuItem>
-                  <MenuItem value="walk-in">Walk-in</MenuItem>
-                  <MenuItem value="other">Other</MenuItem>
+                  <MenuItem value="pending">Pending</MenuItem>
+                  <MenuItem value="partial">Partial</MenuItem>
+                  <MenuItem value="completed">Completed</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
           </Grid>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} sx={{ color: '#FFD700' }}>
-            Cancel
-          </Button>
+        <DialogActions sx={{ background: mode === 'dark' ? '#1E293B' : '#F8FAFC', borderTop: mode === 'dark' ? '1px solid #475569' : '1px solid #E2E8F0' }}>
+          <Button onClick={handleCloseDialog} sx={{ color: mode === 'dark' ? '#94A3B8' : '#64748B' }}>Cancel</Button>
           <Button
             onClick={handleSubmit}
             variant="contained"
             sx={{
-              background: 'linear-gradient(135deg, #FFD700, #FFCA28)',
-              color: '#000000',
+              background: mode === 'dark'
+                ? 'linear-gradient(135deg, #3B82F6, #2563EB)'
+                : 'linear-gradient(135deg, #2563EB, #1D4ED8)',
+              color: 'white',
               fontWeight: 600,
               '&:hover': {
-                background: 'linear-gradient(135deg, #FFCA28, #FFD700)'
+                background: mode === 'dark'
+                  ? 'linear-gradient(135deg, #2563EB, #1D4ED8)'
+                  : 'linear-gradient(135deg, #1D4ED8, #0C4A6E)',
               }
             }}
           >
-            {editingVisitor ? 'Update' : 'Add'} Visitor
+            {editingVisitor ? 'Update Visitor' : 'Add Visitor'}
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Floating Action Button */}
+      <Tooltip title="Add Visitor" placement="left">
+        <Fab
+          color="primary"
+          onClick={() => handleOpenDialog()}
+          sx={{
+            position: 'fixed',
+            bottom: 32,
+            right: 32,
+            background: mode === 'dark'
+              ? 'linear-gradient(135deg, #3b82f6, #2563eb)'
+              : 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+            color: 'white',
+            boxShadow: mode === 'dark'
+              ? '0 4px 12px rgba(59, 130, 246, 0.5)'
+              : '0 4px 12px rgba(37, 99, 235, 0.5)',
+            '&:hover': {
+              background: mode === 'dark'
+                ? 'linear-gradient(135deg, #2563eb, #1d4ed8)'
+                : 'linear-gradient(135deg, #1d4ed8, #1e40af)',
+              boxShadow: mode === 'dark'
+                ? '0 6px 16px rgba(59, 130, 246, 0.6)'
+                : '0 6px 16px rgba(37, 99, 235, 0.6)'
+            }
+          }}
+        >
+          <AddIcon />
+        </Fab>
+      </Tooltip>
     </Box>
   );
 };

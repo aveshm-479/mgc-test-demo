@@ -5,28 +5,28 @@ export const createAppTheme = (mode: 'light' | 'dark') => createTheme({
     mode,
     ...(mode === 'dark' ? {
       primary: {
-        main: '#3b82f6',
-        light: '#60a5fa',
-        dark: '#2563eb',
+        main: '#F59E0B', // --primary-gold
+        light: '#FBBF24',
+        dark: '#D97706',
       },
       secondary: {
-        main: '#8b5cf6',
-        light: '#a78bfa',
-        dark: '#7c3aed',
+        main: '#3B82F6', // --action-blue
+        light: '#60A5FA',
+        dark: '#2563EB',
       },
       background: {
-        default: '#0f172a',
-        paper: 'rgba(30, 41, 59, 0.8)',
+        default: '#0F172A', // --bg-primary
+        paper: '#1E293B', // --bg-secondary
       },
       surface: {
-        main: 'rgba(30, 41, 59, 0.5)',
-        light: 'rgba(51, 65, 85, 0.5)',
-        dark: 'rgba(15, 23, 42, 0.8)',
+        main: '#1E293B', // --bg-secondary
+        light: '#334155', // --bg-tertiary
+        dark: '#0F172A', // --bg-primary
       },
       text: {
-        primary: '#f8fafc',
-        secondary: '#cbd5e1',
-        disabled: '#64748b',
+        primary: '#F8FAFC', // --text-primary
+        secondary: '#94A3B8', // --text-secondary
+        disabled: '#64748B',
       },
       success: {
         main: '#10b981',
@@ -50,27 +50,27 @@ export const createAppTheme = (mode: 'light' | 'dark') => createTheme({
       },
     } : {
       primary: {
-        main: '#1976d2',
-        light: '#42a5f5',
-        dark: '#1565c0',
+        main: '#D97706', // --primary-gold
+        light: '#FBBF24',
+        dark: '#B45309',
       },
       secondary: {
-        main: '#7c3aed',
-        light: '#9f7aea',
-        dark: '#553c9a',
+        main: '#2563EB', // --action-blue
+        light: '#60A5FA',
+        dark: '#1D4ED8',
       },
       background: {
-        default: '#f8fafc',
-        paper: '#ffffff',
+        default: '#FFFFFF', // --bg-primary
+        paper: '#F8FAFC', // --bg-secondary
       },
       surface: {
-        main: 'rgba(241, 245, 249, 0.8)',
-        light: 'rgba(226, 232, 240, 0.8)',
-        dark: 'rgba(203, 213, 225, 0.8)',
+        main: '#F8FAFC', // --bg-secondary
+        light: '#F1F5F9', // --bg-tertiary
+        dark: '#E2E8F0', // --border (light mode)
       },
       text: {
-        primary: '#0f172a',
-        secondary: '#475569',
+        primary: '#0F172A', // --text-primary
+        secondary: '#64748B', // --text-secondary
         disabled: '#94a3b8',
       },
       success: {
@@ -159,12 +159,12 @@ export const createAppTheme = (mode: 'light' | 'dark') => createTheme({
         },
         contained: {
           background: mode === 'dark' 
-            ? 'linear-gradient(135deg, #3b82f6, #2563eb)' 
-            : 'linear-gradient(135deg, #1976d2, #1565c0)',
+            ? 'linear-gradient(135deg, #3B82F6, #2563EB)' 
+            : 'linear-gradient(135deg, #2563EB, #1D4ED8)',
           '&:hover': {
             background: mode === 'dark' 
-              ? 'linear-gradient(135deg, #2563eb, #1d4ed8)' 
-              : 'linear-gradient(135deg, #1565c0, #0d47a1)',
+              ? 'linear-gradient(135deg, #2563EB, #1D4ED8)' 
+              : 'linear-gradient(135deg, #1D4ED8, #0C4A6E)',
           },
         },
       },
@@ -173,12 +173,12 @@ export const createAppTheme = (mode: 'light' | 'dark') => createTheme({
       styleOverrides: {
         root: {
           background: mode === 'dark' 
-            ? 'rgba(30, 41, 59, 0.5)' 
-            : 'rgba(255, 255, 255, 0.8)',
+            ? '#1E293B' /* --bg-secondary */ 
+            : '#F8FAFC', /* --bg-secondary */
           backdropFilter: 'blur(10px)',
           border: mode === 'dark' 
-            ? '1px solid rgba(148, 163, 184, 0.1)' 
-            : '1px solid rgba(203, 213, 225, 0.3)',
+            ? '1px solid #475569' /* --border */
+            : '1px solid #E2E8F0', /* --border */
           boxShadow: mode === 'dark' 
             ? '0 8px 32px rgba(0, 0, 0, 0.3)' 
             : '0 8px 32px rgba(0, 0, 0, 0.1)',
@@ -196,12 +196,12 @@ export const createAppTheme = (mode: 'light' | 'dark') => createTheme({
       styleOverrides: {
         root: {
           background: mode === 'dark' 
-            ? 'rgba(0, 0, 0, 0.8)' 
-            : 'rgba(255, 255, 255, 0.8)',
+            ? '#1E293B' /* --bg-secondary */ 
+            : '#F8FAFC', /* --bg-secondary */
           backdropFilter: 'blur(20px)',
           borderBottom: mode === 'dark' 
-            ? '1px solid rgba(255, 215, 0, 0.2)' 
-            : '1px solid rgba(203, 213, 225, 0.3)',
+            ? '1px solid #F59E0B' /* --primary-gold */ 
+            : '1px solid #E2E8F0', /* --border */
           boxShadow: mode === 'dark' 
             ? '0 4px 30px rgba(255, 215, 0, 0.1)' 
             : '0 4px 30px rgba(0, 0, 0, 0.1)',

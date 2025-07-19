@@ -20,8 +20,7 @@ import {
   Menu,
   MenuItem,
   Fade,
-  Badge,
-  Tooltip
+  Tooltip,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -29,17 +28,19 @@ import {
   People as PeopleIcon,
   Business as BusinessIcon,
   Inventory as InventoryIcon,
-  CalendarToday as CalendarIcon,
+  CalendarMonth as CalendarIcon,
   AttachMoney as MoneyIcon,
   AdminPanelSettings as AdminIcon,
-  Logout as LogoutIcon,
-  Person as PersonIcon,
-  Settings as SettingsIcon,
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
   Notifications as NotificationsIcon,
-  Brightness4 as Brightness4Icon,
-  Brightness7 as Brightness7Icon
+  Brightness4 as DarkModeIcon, // Aliased for clarity
+  Brightness7 as LightModeIcon, // Aliased for clarity
+  AccountCircle as AccountCircleIcon,
+  Settings as SettingsIcon,
+  Logout as LogoutIcon,
+  Person as PersonIcon,
+  CardMembership as SubscriptionIcon,
 } from '@mui/icons-material';
 
 export const Layout: React.FC = () => {
@@ -69,83 +70,118 @@ export const Layout: React.FC = () => {
     setSidebarCollapsed(!sidebarCollapsed);
   };
 
+  // Updated navigation with black and yellow accent colors
   const navigation = [
-    { name: 'Dashboard', href: '/mgc-test-demo/dashboard', icon: <DashboardIcon />, color: '#FFD700' },
-    { name: 'Visitors', href: '/mgc-test-demo/visitors', icon: <PeopleIcon />, color: '#FFEB3B' },
-    { name: 'Clubs', href: '/mgc-test-demo/clubs', icon: <BusinessIcon />, color: '#FFF176' },
-    { name: 'Inventory', href: '/mgc-test-demo/inventory', icon: <InventoryIcon />, color: '#FFCA28' },
-    { name: 'Attendance', href: '/mgc-test-demo/attendance', icon: <CalendarIcon />, color: '#FFC107' },
-    { name: 'Expenses', href: '/mgc-test-demo/expenses', icon: <MoneyIcon />, color: '#FFD700' },
-    ...(user?.role === 'super_admin' ? [{ name: 'Admin Management', href: '/mgc-test-demo/admin-management', icon: <AdminIcon />, color: '#FFEB3B' }] : []),
+    { name: 'Dashboard', href: '/dashboard', icon: <DashboardIcon />, color: '#F59E0B' },
+    { name: 'Visitors', href: '/visitors', icon: <PeopleIcon />, color: '#F59E0B' },
+    { name: 'Clubs', href: '/clubs', icon: <BusinessIcon />, color: '#F59E0B' },
+    { name: 'Inventory', href: '/inventory', icon: <InventoryIcon />, color: '#F59E0B' },
+    { name: 'Attendance', href: '/attendance', icon: <CalendarIcon />, color: '#F59E0B' },
+    { name: 'Expenses', href: '/expenses', icon: <MoneyIcon />, color: '#F59E0B' },
+    { name: 'Subscriptions', href: '/subscriptions', icon: <SubscriptionIcon />, color: '#F59E0B' },
+    ...(user?.role === 'super_admin' ? [{ name: 'Admin Management', href: '/admin-management', icon: <AdminIcon />, color: '#F59E0B' }] : []),
   ];
 
   const drawerWidth = 280;
   const collapsedWidth = 80;
 
   const drawer = (
-    <Box sx={{ 
-      height: '100%', 
-      background: 'linear-gradient(180deg, #000000 0%, #1a1a1a 100%)',
-      borderRight: '1px solid rgba(255, 215, 0, 0.2)',
+    <Box sx={{
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      background: mode === 'dark' 
+        ? '#1E293B' /* --bg-secondary */
+        : '#F8FAFC' /* --bg-secondary */,
       position: 'relative',
-      overflow: 'hidden',
-      transition: 'width 0.3s ease',
-      width: sidebarCollapsed ? collapsedWidth : drawerWidth
+      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+      width: sidebarCollapsed ? collapsedWidth : drawerWidth,
+      borderRight: mode === 'dark' 
+        ? '1px solid #475569' /* --border */
+        : '1px solid #E2E8F0' /* --border */,
+      boxShadow: mode === 'dark'
+        ? '4px 0 20px rgba(0, 0, 0, 0.5)'
+        : '4px 0 20px rgba(0, 0, 0, 0.1)'
     }}>
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
+      {/* Header */}
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
         justifyContent: sidebarCollapsed ? 'center' : 'space-between',
-        px: sidebarCollapsed ? 1 : 3,
-        py: 2,
-        background: 'rgba(0, 0, 0, 0.8)',
+        px: sidebarCollapsed ? 1 : 2,
+        py: 1.5,
+        background: mode === 'dark'
+          ? '#1E293B' /* --bg-secondary */
+          : '#F8FAFC' /* --bg-secondary */,
         backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255, 215, 0, 0.2)',
-        position: 'relative',
-        zIndex: 1
+        borderBottom: mode === 'dark'
+          ? '1px solid #475569' /* --border */
+          : '1px solid #E2E8F0' /* --border */,
+        flexShrink: 0
       }}>
         {!sidebarCollapsed && (
-          <Typography variant="h6" sx={{ 
-            color: '#FFD700', 
-            fontWeight: 'bold',
-            fontSize: '1.2rem',
-            letterSpacing: '0.5px',
+          <Typography variant="h6" sx={{
+            background: mode === 'dark'
+              ? 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)' /* --primary-gold */
+              : 'linear-gradient(135deg, #D97706 0%, #F59E0B 100%)' /* --primary-gold */,
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            fontWeight: 800,
+            fontSize: '1.1rem',
+            letterSpacing: '0.3px',
             whiteSpace: 'nowrap',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            textShadow: mode === 'dark' 
+              ? '0 0 20px rgba(255, 193, 7, 0.3)'
+              : '0 0 20px rgba(33, 33, 33, 0.2)'
           }}>
-            <span style={{ 
-              background: 'linear-gradient(135deg, #FFD700, #FFEB3B)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              fontWeight: 800,
-              textShadow: '0 0 10px rgba(255, 215, 0, 0.5)'
-            }}>
-              Magical CMS
-            </span>
+            ✨ Magical CMS
           </Typography>
         )}
-        <IconButton 
-          onClick={toggleSidebar} 
-          sx={{ 
-            color: '#FFD700',
-            '&:hover': {
-              backgroundColor: 'rgba(255, 215, 0, 0.1)',
-              transform: sidebarCollapsed ? 'rotate(180deg)' : 'rotate(180deg)',
-              transition: 'all 0.3s ease'
-            }
-          }}
-        >
-          {sidebarCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-        </IconButton>
+        <Tooltip title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"} placement="right">
+          <IconButton
+            onClick={toggleSidebar}
+            sx={{
+              background: mode === 'dark'
+                ? 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)' /* --primary-gold */
+                : 'linear-gradient(135deg, #D97706 0%, #F59E0B 100%)' /* --primary-gold */,
+              color: mode === 'dark' ? '#000' : '#fff',
+              width: 32,
+              height: 32,
+              boxShadow: mode === 'dark'
+                ? '0 4px 12px rgba(255, 193, 7, 0.3)'
+                : '0 4px 12px rgba(33, 33, 33, 0.3)',
+              '&:hover': {
+                background: mode === 'dark'
+                  ? 'linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%)'
+                  : 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+                transform: 'scale(1.05)',
+                boxShadow: mode === 'dark'
+                  ? '0 6px 16px rgba(255, 193, 7, 0.4)'
+                  : '0 6px 16px rgba(33, 33, 33, 0.4)'
+              },
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+            }}
+          >
+            {sidebarCollapsed ? <ChevronRightIcon sx={{ fontSize: 20 }} /> : <ChevronLeftIcon sx={{ fontSize: 20 }} />}
+          </IconButton>
+        </Tooltip>
       </Box>
-      
-      <Divider sx={{ borderColor: 'rgba(255, 215, 0, 0.2)' }} />
-      
-      <List sx={{ px: sidebarCollapsed ? 1 : 2, py: 2 }}>
+
+      {/* Navigation */}
+      <Box sx={{ 
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        <List sx={{ 
+          px: sidebarCollapsed ? 1 : 2, 
+          py: 1.5
+        }}>
         {navigation.map((item) => (
-          <Tooltip 
-            key={item.name} 
-            title={sidebarCollapsed ? item.name : ''} 
+          <Tooltip
+            key={item.name}
+            title={sidebarCollapsed ? item.name : ''}
             placement="right"
             arrow
           >
@@ -153,74 +189,92 @@ export const Layout: React.FC = () => {
               component={Link}
               to={item.href}
               sx={{
-                mb: 1,
-                borderRadius: '12px',
-                color: location.pathname === item.href ? '#FFD700' : 'rgba(255, 255, 255, 0.7)',
-                backgroundColor: location.pathname === item.href 
-                  ? 'rgba(255, 215, 0, 0.15)' 
+                  mb: 1,
+                  borderRadius: '10px',
+                color: location.pathname === item.href 
+                  ? mode === 'dark' ? '#000' : '#fff'
+                  : mode === 'dark' 
+                    ? '#F8FAFC' /* --text-primary */ 
+                      : '#0F172A' /* --text-primary */,
+                background: location.pathname === item.href
+                  ? mode === 'dark'
+                    ? 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)' /* --primary-gold */
+                    : 'linear-gradient(135deg, #D97706 0%, #F59E0B 100%)' /* --primary-gold */
                   : 'transparent',
-                border: location.pathname === item.href 
-                  ? '1px solid rgba(255, 215, 0, 0.4)' 
-                  : '1px solid transparent',
-                transition: 'all 0.3s ease',
+                border: location.pathname === item.href
+                  ? 'none'
+                  : mode === 'dark'
+                    ? '1px solid #475569' /* --border */
+                      : '1px solid #E2E8F0' /* --border */,
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 justifyContent: sidebarCollapsed ? 'center' : 'flex-start',
-                px: sidebarCollapsed ? 1.5 : 2,
-                py: 1.5,
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 215, 0, 0.1)',
-                  color: '#FFD700',
-                  transform: 'translateX(4px)',
-                  border: '1px solid rgba(255, 215, 0, 0.3)',
-                  boxShadow: '0 4px 20px rgba(255, 215, 0, 0.2)'
-                },
+                  px: sidebarCollapsed ? 1 : 2,
+                  py: 1.25,
                 position: 'relative',
-                overflow: 'hidden'
+                  minHeight: 42,
+                '&:hover': {
+                  background: location.pathname === item.href
+                    ? mode === 'dark'
+                      ? 'linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%)'
+                      : 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)'
+                    : mode === 'dark'
+                      ? 'rgba(245, 158, 11, 0.1)' /* --primary-gold with opacity */
+                        : 'rgba(217, 119, 6, 0.05)' /* --primary-gold (darker) with opacity */,
+                  transform: 'translateX(4px)',
+                  boxShadow: location.pathname === item.href
+                    ? mode === 'dark'
+                      ? '0 8px 25px rgba(245, 158, 11, 0.3)'
+                      : '0 8px 25px rgba(217, 119, 6, 0.3)'
+                    : mode === 'dark'
+                      ? '0 4px 20px rgba(245, 158, 11, 0.1)'
+                        : '0 4px 20px rgba(217, 119, 6, 0.1)'
+                  }
               }}
             >
-              <ListItemIcon sx={{ 
-                color: location.pathname === item.href ? item.color : 'rgba(255, 255, 255, 0.7)',
-                minWidth: sidebarCollapsed ? 'auto' : 40,
-                mr: sidebarCollapsed ? 0 : 2,
-                transition: 'all 0.3s ease',
-                justifyContent: 'center'
+              <ListItemIcon sx={{
+                color: 'inherit',
+                  minWidth: sidebarCollapsed ? 'auto' : 36,
+                  mr: sidebarCollapsed ? 0 : 1.5,
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                justifyContent: 'center',
+                '& svg': {
+                    fontSize: '1.25rem',
+                  filter: location.pathname === item.href 
+                    ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))'
+                      : 'none'
+                }
               }}>
                 {item.icon}
               </ListItemIcon>
               {!sidebarCollapsed && (
-                <ListItemText 
-                  primary={item.name} 
-                  primaryTypographyProps={{ 
-                    fontWeight: location.pathname === item.href ? 600 : 400,
-                    fontSize: '0.9rem',
+                <ListItemText
+                  primary={item.name}
+                  primaryTypographyProps={{
+                    fontWeight: location.pathname === item.href ? 700 : 500,
+                    fontSize: '0.95rem',
                     letterSpacing: '0.3px',
                     whiteSpace: 'nowrap',
-                    overflow: 'hidden'
-                  }} 
+                      overflow: 'hidden'
+                  }}
                 />
-              )}
-              {location.pathname === item.href && !sidebarCollapsed && (
-                <Box sx={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  background: `linear-gradient(90deg, transparent, ${item.color}20, transparent)`,
-                  animation: 'slide-in 0.5s ease-out'
-                }} />
               )}
             </ListItem>
           </Tooltip>
         ))}
       </List>
+        </Box>
     </Box>
   );
 
   return (
-    <Box sx={{ 
-      display: 'flex', 
+    <Box sx={{
+      display: 'flex',
       minHeight: '100vh',
-      position: 'relative'
+      width: '100vw',
+      overflowX: 'hidden',
+      background: mode === 'dark'
+        ? '#0F172A' /* --bg-primary */
+        : '#FFFFFF', /* --bg-primary */
     }}>
       {/* Desktop Sidebar */}
       <Box
@@ -228,17 +282,22 @@ export const Layout: React.FC = () => {
         sx={{
           width: { sm: sidebarCollapsed ? collapsedWidth : drawerWidth },
           flexShrink: { sm: 0 },
-          transition: 'width 0.3s ease',
+          transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           '& .MuiDrawer-paper': {
             width: sidebarCollapsed ? collapsedWidth : drawerWidth,
             boxSizing: 'border-box',
             background: 'transparent',
             border: 'none',
-            transition: 'width 0.3s ease',
+            transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             overflow: 'hidden'
           },
+          position: 'fixed',
+          top: 0,
+          bottom: 0,
+          zIndex: (theme) => theme.zIndex.drawer + 2,
         }}
       >
+        {/* Mobile Drawer */}
         <Drawer
           variant="temporary"
           open={sidebarOpen}
@@ -251,11 +310,16 @@ export const Layout: React.FC = () => {
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: drawerWidth,
+              background: mode === 'dark' 
+                ? '#1E293B' /* --bg-secondary */
+                : '#F8FAFC', /* --bg-secondary */
             },
           }}
         >
           {drawer}
         </Drawer>
+        
+        {/* Desktop Drawer */}
         <Drawer
           variant="permanent"
           sx={{
@@ -263,8 +327,11 @@ export const Layout: React.FC = () => {
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: sidebarCollapsed ? collapsedWidth : drawerWidth,
-              transition: 'width 0.3s ease',
-              overflow: 'hidden'
+              transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              overflow: 'hidden',
+              background: mode === 'dark' 
+                ? '#1E293B' /* --bg-secondary */
+                : '#F8FAFC', /* --bg-secondary */
             },
           }}
           open
@@ -273,82 +340,137 @@ export const Layout: React.FC = () => {
         </Drawer>
       </Box>
 
-      {/* Main Content */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          display: 'flex',
-          flexDirection: 'column',
+          p: 3,
+          ml: { sm: sidebarCollapsed ? `${collapsedWidth}px` : `${drawerWidth}px` },
+          transition: 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           width: { sm: `calc(100% - ${sidebarCollapsed ? collapsedWidth : drawerWidth}px)` },
-          minHeight: '100vh',
-          position: 'relative',
-          transition: 'width 0.3s ease'
         }}
       >
-        {/* Header */}
         <AppBar
-          position="sticky"
+          position="fixed"
           sx={{
+            ml: { sm: sidebarCollapsed ? collapsedWidth : drawerWidth },
+            width: { sm: `calc(100% - ${sidebarCollapsed ? collapsedWidth : drawerWidth}px)` },
+            boxShadow: 'none',
+            background: mode === 'dark' 
+              ? '#1E293B' /* --bg-secondary */ 
+              : '#F8FAFC', /* --bg-secondary */
             backdropFilter: 'blur(20px)',
-            ml: { sm: `${sidebarCollapsed ? collapsedWidth : drawerWidth}px` },
-            transition: 'margin-left 0.3s ease',
+            borderBottom: mode === 'dark' 
+              ? '1px solid #475569' /* --border */ 
+              : '1px solid #E2E8F0', /* --border */
+            transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            zIndex: (theme) => theme.zIndex.drawer + 1,
           }}
         >
-          <Toolbar>
+          <Toolbar
+            sx={{
+              pr: { xs: 2, sm: 3 },
+              pl: { xs: 2, sm: 3 },
+              minHeight: '72px',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            {/* Mobile menu button */}
             <IconButton
               color="inherit"
               aria-label="open drawer"
               edge="start"
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              sx={{ mr: 2, display: { sm: 'none' } }}
+              sx={{ 
+                mr: 2, 
+                display: { sm: 'none' },
+                color: mode === 'dark' ? '#F59E0B' : '#D97706',
+              }}
             >
               <MenuIcon />
             </IconButton>
-            
+
             <Box sx={{ flexGrow: 1 }} />
-            
+
+            {/* Header actions */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              {/* Current Club */}
               {currentClub && (
-                <Chip 
-                  label={currentClub.name} 
+                <Chip
+                  label={currentClub.name}
                   size="small"
-                  sx={{ 
-                    fontWeight: 600
-                  }} 
+                  sx={{
+                    background: mode === 'dark'
+                      ? 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)' /* --primary-gold */
+                      : 'linear-gradient(135deg, #D97706 0%, #F59E0B 100%)', /* --primary-gold */
+                    color: mode === 'dark' ? '#000' : '#fff',
+                    fontWeight: 600,
+                    fontSize: '0.8rem',
+                    '& .MuiChip-label': {
+                      px: 1.5,
+                    },
+                    boxShadow: mode === 'dark'
+                      ? '0 2px 8px rgba(245, 158, 11, 0.3)'
+                      : '0 2px 8px rgba(217, 119, 6, 0.3)',
+                  }}
                 />
               )}
-              
-              <IconButton onClick={toggleTheme} color="inherit">
-                {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-              </IconButton>
-              
-              <IconButton color="inherit">
-                <Badge badgeContent={3} color="warning">
-                  <NotificationsIcon />
-                </Badge>
+
+              {/* Theme toggle */}
+              <IconButton onClick={toggleTheme} color="inherit" sx={{ color: mode === 'dark' ? '#F59E0B' : '#D97706' }}>
+                {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
               </IconButton>
 
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Avatar sx={{ 
-                  width: 32,
-                  height: 32,
-                  fontSize: '0.875rem',
-                  fontWeight: 'bold'
-                }}>
-                  {user?.name.charAt(0)}
-                </Avatar>
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                  {user?.name}
-                </Typography>
-              </Box>
+              {/* Notifications */}
+              <IconButton color="inherit" sx={{ color: mode === 'dark' ? '#F59E0B' : '#D97706' }}>
+                <NotificationsIcon />
+                <Chip label="3" size="small" sx={{
+                  backgroundColor: '#F59E0B',
+                  color: '#000',
+                  height: 18,
+                  minWidth: 18,
+                  fontSize: '0.7rem',
+                  fontWeight: 'bold',
+                  position: 'absolute',
+                  top: 5,
+                  right: 5,
+                  borderRadius: '50%',
+                  p: '0 4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }} />
+              </IconButton>
 
+              {/* User Profile */}
               <IconButton
+                edge="end"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
                 onClick={handleProfileMenuOpen}
                 color="inherit"
+                sx={{ p: 0 }}
               >
-                <SettingsIcon />
+                <Avatar sx={{ 
+                  bgcolor: mode === 'dark' ? '#F59E0B' : '#D97706',
+                  color: mode === 'dark' ? '#000' : '#fff',
+                  fontWeight: 'bold',
+                  fontSize: '1rem',
+                  width: 36,
+                  height: 36,
+                }}>
+                  {user?.name ? user.name.charAt(0).toUpperCase() : <AccountCircleIcon sx={{ color: mode === 'dark' ? '#000' : '#fff' }} />}
+                </Avatar>
               </IconButton>
+              <Typography variant="subtitle1" sx={{
+                color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
+                fontWeight: 600,
+                display: { xs: 'none', sm: 'block' }
+              }}>
+                {user?.name || 'Super Admin'}
+              </Typography>
             </Box>
           </Toolbar>
         </AppBar>
@@ -361,40 +483,85 @@ export const Layout: React.FC = () => {
           TransitionComponent={Fade}
           PaperProps={{
             sx: {
-              borderRadius: '12px',
+              borderRadius: '16px',
               mt: 1,
+              minWidth: 200,
+              background: mode === 'dark'
+                ? '#1E293B' /* --bg-secondary */
+                : '#F8FAFC', /* --bg-secondary */
+              backdropFilter: 'blur(20px)',
+              border: mode === 'dark'
+                ? '1px solid #475569' /* --border */
+                : '1px solid #E2E8F0', /* --border */
+              boxShadow: mode === 'dark'
+                ? '0 8px 32px rgba(0, 0, 0, 0.3)'
+                : '0 8px 32px rgba(0, 0, 0, 0.1)',
             }
           }}
         >
-          <MenuItem onClick={handleProfileMenuClose}>
+          <MenuItem 
+            onClick={handleProfileMenuClose}
+            sx={{
+              color: mode === 'dark' ? '#F8FAFC' /* --text-primary */ : '#0F172A', /* --text-primary */
+              '&:hover': {
+                background: mode === 'dark' 
+                  ? 'rgba(245, 158, 11, 0.1)' 
+                  : 'rgba(217, 119, 6, 0.05)',
+              },
+            }}
+          >
             <ListItemIcon>
-              <PersonIcon fontSize="small" />
+              <PersonIcon fontSize="small" sx={{ color: 'inherit' }} />
             </ListItemIcon>
             Profile
           </MenuItem>
-          <MenuItem onClick={handleProfileMenuClose}>
+          <MenuItem 
+            onClick={handleProfileMenuClose}
+            sx={{
+              color: mode === 'dark' ? '#F8FAFC' /* --text-primary */ : '#0F172A', /* --text-primary */
+              '&:hover': {
+                background: mode === 'dark' 
+                  ? 'rgba(245, 158, 11, 0.1)' 
+                  : 'rgba(217, 119, 6, 0.05)',
+              },
+            }}
+          >
             <ListItemIcon>
-              <SettingsIcon fontSize="small" />
+              <SettingsIcon fontSize="small" sx={{ color: 'inherit' }} />
             </ListItemIcon>
             Settings
           </MenuItem>
-          <Divider />
-          <MenuItem onClick={handleLogout}>
+          <Divider sx={{ 
+            borderColor: mode === 'dark' 
+              ? '#475569' /* --border */ 
+              : '#E2E8F0', /* --border */
+          }} />
+          <MenuItem 
+            onClick={handleLogout}
+            sx={{
+              color: '#dc2626', // error.main
+              '&:hover': {
+                background: 'rgba(220, 38, 38, 0.1)',
+              },
+            }}
+          >
             <ListItemIcon>
-              <LogoutIcon fontSize="small" />
+              <LogoutIcon fontSize="small" sx={{ color: '#dc2626' }} />
             </ListItemIcon>
             Logout
           </MenuItem>
         </Menu>
 
-        {/* Page Content */}
-        <Box sx={{ 
-          flex: 1,
-          overflow: 'auto',
-          p: 3,
-          position: 'relative',
-          zIndex: 1
+        {/* Main Content */}
+        <Box sx={{
+          pt: '72px',
+          background: mode === 'dark'
+            ? '#0F172A' /* --bg-primary */
+            : '#FFFFFF', /* --bg-primary */
+          minHeight: 'calc(100vh - 72px)',
+          paddingBottom: 3, // Add some padding to the bottom
         }}>
+          {/* Content from router */}
           <Outlet />
         </Box>
       </Box>
